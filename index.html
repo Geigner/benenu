@@ -1,0 +1,788 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>בינינו · benenu — תפריט</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #faf8f5;
+      --surface: #ffffff;
+      --surface-alt: #f3efe9;
+      --ink: #221e1b;
+      --muted: #6f675f;
+      --accent: #395241;
+      --accent-soft: #eef3ef;
+      --warm: #a85b32;
+      --border: #e6dfd5;
+      --radius: 14px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: 'Heebo', sans-serif;
+      background: var(--bg);
+      color: var(--ink);
+      line-height: 1.55;
+      padding-bottom: 96px;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Header */
+    header {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 28px 18px 22px;
+      text-align: center;
+    }
+
+    .brand-en {
+      font-size: 0.76rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--muted);
+      font-weight: 500;
+      margin-bottom: 4px;
+    }
+
+    h1 {
+      font-size: 2rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: var(--ink);
+    }
+
+    .subtitle {
+      color: var(--muted);
+      font-size: 0.92rem;
+      margin-top: 4px;
+    }
+
+    /* Mobile Category Strip */
+    .mobile-strip {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      background: rgba(250, 248, 245, 0.95);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--border);
+      padding: 8px 14px;
+      display: flex;
+      gap: 6px;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+
+    .mobile-strip::-webkit-scrollbar {
+      display: none;
+    }
+
+    .mobile-link {
+      flex: 0 0 auto;
+      text-decoration: none;
+      font-size: 0.82rem;
+      color: var(--muted);
+      padding: 5px 11px;
+      border-radius: 8px;
+      font-weight: 500;
+    }
+
+    .mobile-link.active {
+      color: var(--ink);
+      background: var(--surface-alt);
+      font-weight: 600;
+    }
+
+    /* Main Layout */
+    .layout {
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 28px 16px;
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 32px;
+    }
+
+    @media (min-width: 820px) {
+      .layout {
+        grid-template-columns: 176px 1fr;
+        align-items: start;
+        gap: 36px;
+      }
+
+      .mobile-strip {
+        display: none;
+      }
+    }
+
+    /* Subtle Side Navigation */
+    .side-nav {
+      display: none;
+    }
+
+    @media (min-width: 820px) {
+      .side-nav {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+        position: sticky;
+        top: 28px;
+        padding-top: 4px;
+        border-left: 1px solid var(--border);
+        padding-left: 12px;
+      }
+
+      .side-link {
+        text-decoration: none;
+        color: var(--muted);
+        font-size: 0.88rem;
+        font-weight: 400;
+        padding: 6px 8px;
+        border-radius: 7px;
+        transition: color 0.15s ease, background 0.15s ease;
+      }
+
+      .side-link:hover {
+        color: var(--ink);
+        background: var(--surface-alt);
+      }
+
+      .side-link.active {
+        color: var(--ink);
+        font-weight: 600;
+        background: var(--surface-alt);
+      }
+    }
+
+    /* Menu Sections */
+    .section-block {
+      scroll-margin-top: 56px;
+      margin-bottom: 38px;
+    }
+
+    .section-head {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 12px;
+      padding-bottom: 10px;
+      margin-bottom: 4px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .section-title {
+      font-size: 1.28rem;
+      font-weight: 700;
+      color: var(--ink);
+    }
+
+    .section-sub {
+      font-size: 0.82rem;
+      color: var(--muted);
+    }
+
+    /* Clean List */
+    .menu-list {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      margin-top: 10px;
+      overflow: hidden;
+    }
+
+    .menu-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      padding: 15px 18px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .menu-row:last-child {
+      border-bottom: none;
+    }
+
+    .row-content {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .row-top {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .item-title {
+      font-size: 1.03rem;
+      font-weight: 600;
+      color: var(--ink);
+    }
+
+    .item-price {
+      font-size: 0.98rem;
+      font-weight: 600;
+      color: var(--warm);
+      white-space: nowrap;
+    }
+
+    .item-desc {
+      font-size: 0.88rem;
+      color: var(--muted);
+      margin-top: 3px;
+    }
+
+    .sizes {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 9px;
+    }
+
+    .size-btn {
+      border: 1px solid var(--border);
+      background: var(--bg);
+      color: var(--muted);
+      font-family: inherit;
+      font-size: 0.78rem;
+      padding: 3px 10px;
+      border-radius: 999px;
+      cursor: pointer;
+      transition: all 0.14s ease;
+    }
+
+    .size-btn.active {
+      background: var(--accent-soft);
+      border-color: var(--accent);
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    .add-btn {
+      flex-shrink: 0;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--ink);
+      font-family: inherit;
+      font-size: 0.84rem;
+      font-weight: 600;
+      padding: 8px 14px;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .add-btn:hover {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #fff;
+    }
+
+    /* Floating Order Bar */
+    .order-bar {
+      position: fixed;
+      bottom: 14px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: calc(100% - 28px);
+      max-width: 680px;
+      background: var(--ink);
+      color: #fff;
+      border-radius: 16px;
+      padding: 11px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      box-shadow: 0 12px 28px rgba(20, 17, 15, 0.22);
+      z-index: 30;
+      cursor: pointer;
+    }
+
+    .order-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 0.94rem;
+      font-weight: 500;
+    }
+
+    .order-count {
+      background: var(--warm);
+      color: #fff;
+      font-size: 0.78rem;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 999px;
+    }
+
+    .order-cta {
+      background: #fff;
+      color: var(--ink);
+      border: none;
+      border-radius: 10px;
+      padding: 7px 13px;
+      font-family: inherit;
+      font-size: 0.84rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    /* Cart Sheet */
+    .backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(20, 17, 15, 0.42);
+      display: none;
+      align-items: flex-end;
+      justify-content: center;
+      z-index: 50;
+    }
+
+    .backdrop.open {
+      display: flex;
+    }
+
+    .sheet {
+      background: var(--surface);
+      width: 100%;
+      max-width: 560px;
+      max-height: 85vh;
+      border-radius: 22px 22px 0 0;
+      padding: 22px 20px;
+      overflow-y: auto;
+    }
+
+    .sheet-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 14px;
+    }
+
+    .close-btn {
+      border: none;
+      background: var(--surface-alt);
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+
+    .cart-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .qty-box {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .qty-btn {
+      width: 26px;
+      height: 26px;
+      border-radius: 7px;
+      border: 1px solid var(--border);
+      background: var(--bg);
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .inputs {
+      display: grid;
+      gap: 9px;
+      margin-top: 14px;
+    }
+
+    .input {
+      width: 100%;
+      padding: 10px 12px;
+      border-radius: 11px;
+      border: 1px solid var(--border);
+      font-family: inherit;
+      font-size: 0.9rem;
+    }
+
+    .input:focus {
+      outline: none;
+      border-color: var(--accent);
+    }
+
+    .confirm-btn {
+      margin-top: 14px;
+      width: 100%;
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: 12px;
+      padding: 12px;
+      font-family: inherit;
+      font-size: 0.98rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .empty {
+      text-align: center;
+      color: var(--muted);
+      padding: 22px 8px;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="brand-en">benenu</div>
+    <h1>בינינו</h1>
+    <p class="subtitle">קפה, מאפים וכריכים</p>
+  </header>
+
+  <nav class="mobile-strip" id="mobileNav" aria-label="קטגוריות"></nav>
+
+  <div class="layout">
+    <aside class="side-nav" id="sideNav" aria-label="קטגוריות תפריט"></aside>
+    <main id="menuRoot"></main>
+  </div>
+
+  <div class="order-bar" onclick="openSheet()">
+    <div class="order-left">
+      <span class="order-count" id="barCount">0</span>
+      <span>ההזמנה שלי</span>
+    </div>
+    <div style="display:flex; align-items:center; gap:10px;">
+      <strong id="barTotal">0 ₪</strong>
+      <button type="button" class="order-cta">לסיכום</button>
+    </div>
+  </div>
+
+  <div class="backdrop" id="sheetBackdrop" onclick="if (event.target.id === 'sheetBackdrop') closeSheet()">
+    <div class="sheet" onclick="event.stopPropagation()">
+      <div class="sheet-head">
+        <h2>ההזמנה שלי</h2>
+        <button type="button" class="close-btn" onclick="closeSheet()" aria-label="סגור">✕</button>
+      </div>
+      <div id="sheetItems"></div>
+      <div class="inputs">
+        <input type="text" class="input" id="nameInput" placeholder="שם" />
+        <input type="tel" class="input" id="phoneInput" placeholder="טלפון לעדכון כשהזמנה מוכנה" />
+        <input type="text" class="input" id="noteInput" placeholder="הערות (למשל נטול קפאין, בלי קרח, שולחן)" />
+      </div>
+      <button type="button" class="confirm-btn" onclick="previewOrder()">
+        סיכום הזמנה · <span id="sheetTotal">0 ₪</span>
+      </button>
+    </div>
+  </div>
+
+  <script>
+    const MENU_DATA = [
+      {
+        id: "coffee",
+        category: "קפה ומשקאות",
+        sub: "יש קפה נטול",
+        items: [
+          { id: "cold-coffee", name: "קפה קר", desc: "קפה קר רענן", sizes: [{ label: "רגיל", price: 18 }, { label: "גדול", price: 20 }] },
+          { id: "espresso", name: "אספרסו", desc: "קצר ומדויק", sizes: [{ label: "רגיל", price: 10 }] },
+          { id: "iced-americano", name: "אמריקנו קר", desc: "אספרסו ומים קרים על קרח", sizes: [{ label: "רגיל", price: 17 }] },
+          { id: "cortado", name: "קורטדו", desc: "אספרסו עם נגיעת חלב", sizes: [{ label: "רגיל", price: 14 }] },
+          { id: "iced-espresso", name: "אספרסו על קרח", desc: "מנה מרוכזת על קרח", sizes: [{ label: "רגיל", price: 14 }] },
+          { id: "hafuch", name: "הפוך", desc: "קפה הפוך קלאסי", sizes: [{ label: "קטן", price: 15 }, { label: "גדול", price: 19 }] },
+          { id: "choco", name: "שוקו קר", desc: "שוקו קר מפנק", sizes: [{ label: "רגיל", price: 19 }, { label: "גדול", price: 22 }] },
+          { id: "matcha", name: "מאצ'ה קר", desc: "מאצ'ה על בסיס קר", sizes: [{ label: "רגיל", price: 17 }, { label: "גדול", price: 26 }] },
+          { id: "americano", name: "אמריקנו", desc: "אספרסו עם מים חמים", sizes: [{ label: "רגיל", price: 14 }] },
+          { id: "turmeric-chai", name: "צ'אי כורכום קר", desc: "תבלינים וכורכום על קר", sizes: [{ label: "רגיל", price: 22 }] },
+          { id: "macchiato", name: "מקיאטו", desc: "אספרסו עם קצף", sizes: [{ label: "רגיל", price: 13 }] },
+          { id: "iced-tea-v60", name: "תה קר V60", desc: "חליטה קרה", sizes: [{ label: "רגיל", price: 18 }] },
+          { id: "black-coffee", name: "קפה שחור", desc: "קפה שחור קלאסי", sizes: [{ label: "רגיל", price: 10 }] },
+          { id: "natural-juice", name: "מיץ טבעי", desc: "מיץ טבעי", sizes: [{ label: "רגיל", price: 18 }] },
+          { id: "soda", name: "סודה", desc: "סודה קרה", sizes: [{ label: "רגיל", price: 10 }] }
+        ]
+      },
+      {
+        id: "tea-weight",
+        category: "חליטות וקפה במשקל",
+        sub: "חליטות אורגניות וקפה לבית",
+        items: [
+          {
+            id: "herbal",
+            name: "חליטות אורגניות",
+            desc: "קמומיל הדרים / תה שחור / יסמין / צ'אי (הכל אורגני ושמח)",
+            sizes: [{ label: "רגיל", price: 17 }]
+          },
+          {
+            id: "leaf-tea",
+            name: "תה נענע / קינמון / לימון / דבש",
+            desc: "חליטה חמה",
+            sizes: [{ label: "רגיל", price: 10 }]
+          },
+          {
+            id: "by-weight",
+            name: "קפה במשקל",
+            desc: "לבית",
+            sizes: [{ label: "רגיל", price: 30 }, { label: "גדול", price: 75 }]
+          }
+        ]
+      },
+      {
+        id: "pastries",
+        category: "מאפים ועוגות",
+        sub: "מאפים טריים ועוגות",
+        items: [
+          {
+            id: "croissants",
+            name: "קרואסונים",
+            desc: "חמאה או שוקולד",
+            sizes: [{ label: "רגיל", price: 19 }]
+          },
+          {
+            id: "vegan-pastries",
+            name: "מאפים טבעוניים",
+            desc: "רול קינמון, חלבה, מייפל, פיצוחים",
+            sizes: [{ label: "רגיל", price: 19 }]
+          },
+          {
+            id: "savory-pastries",
+            name: "מאפים מלוחים",
+            desc: "זיתים וגבינות, פרמז'ן, פסטו, עגבניות מיובשות",
+            sizes: [{ label: "רגיל", price: 13 }, { label: "גדול", price: 19 }]
+          },
+          {
+            id: "cakes",
+            name: "עוגות",
+            desc: "גזר הדרים, רוזמרין לימון, פירות יער טימין, בננה שוקולד",
+            sizes: [{ label: "רגיל", price: 18 }]
+          }
+        ]
+      },
+      {
+        id: "sandwiches",
+        category: "כריכים",
+        sub: "39 ₪ · ללא גלוטן בתוספת 3 ₪",
+        items: [
+          {
+            id: "egg-vegan",
+            name: "סלט ביצים *טבעוני*",
+            desc: "בחלת כוסמין, שמיר ובצל ירוק",
+            sizes: [{ label: "רגיל", price: 39 }, { label: "ללא גלוטן (+3 ₪)", price: 42 }]
+          },
+          {
+            id: "manchego",
+            name: "מנצ'גו",
+            desc: "ריבת שרי טימין, טפנד זיתים, רוקט, בלסמי מצומצם",
+            sizes: [{ label: "רגיל", price: 39 }, { label: "ללא גלוטן (+3 ₪)", price: 42 }]
+          },
+          {
+            id: "feta",
+            name: "פטה",
+            desc: "ממרח ירוק, שקדים קלויים, חסה לאליק, עלי בזיל, סלק",
+            sizes: [{ label: "רגיל", price: 39 }, { label: "ללא גלוטן (+3 ₪)", price: 42 }]
+          },
+          {
+            id: "cashew",
+            name: "גבינת קשיו",
+            desc: "סלק, חסה לאליק, זעתר, סומק, שמן זית ומייפל",
+            sizes: [{ label: "רגיל", price: 39 }, { label: "ללא גלוטן (+3 ₪)", price: 42 }]
+          },
+          {
+            id: "toast-manchego",
+            name: "טוסט מנצ'גו",
+            desc: "ריבת שרי טימין, טפנד זיתים, זעתר ושום",
+            sizes: [{ label: "רגיל", price: 39 }, { label: "ללא גלוטן (+3 ₪)", price: 42 }]
+          }
+        ]
+      }
+    ];
+
+    let activeId = MENU_DATA[0].id;
+    const sizeIdx = {};
+    const cart = [];
+
+    function init() {
+      MENU_DATA.forEach(s => s.items.forEach(i => { sizeIdx[i.id] = 0; }));
+      renderNavs();
+      renderList();
+      renderBar();
+      observeSections();
+    }
+
+    function renderNavs() {
+      document.getElementById("sideNav").innerHTML = MENU_DATA.map(s => `
+        <a href="#${s.id}" class="side-link ${s.id === activeId ? "active" : ""}" data-nav="${s.id}">${s.category}</a>
+      `).join("");
+
+      document.getElementById("mobileNav").innerHTML = MENU_DATA.map(s => `
+        <a href="#${s.id}" class="mobile-link ${s.id === activeId ? "active" : ""}" data-nav="${s.id}">${s.category}</a>
+      `).join("");
+    }
+
+    function setActiveNav(id) {
+      activeId = id;
+      document.querySelectorAll("[data-nav]").forEach(el => {
+        el.classList.toggle("active", el.getAttribute("data-nav") === id);
+      });
+    }
+
+    function observeSections() {
+      const obs = new IntersectionObserver(entries => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) setActiveNav(entry.target.id);
+        });
+      }, { rootMargin: "-20% 0px -65% 0px" });
+
+      document.querySelectorAll(".section-block").forEach(el => obs.observe(el));
+    }
+
+    function renderList() {
+      document.getElementById("menuRoot").innerHTML = MENU_DATA.map(sec => `
+        <section class="section-block" id="${sec.id}">
+          <div class="section-head">
+            <h2 class="section-title">${sec.category}</h2>
+            <span class="section-sub">${sec.sub || ""}</span>
+          </div>
+          <div class="menu-list">
+            ${sec.items.map(item => {
+              const idx = sizeIdx[item.id] || 0;
+              const current = item.sizes[idx];
+              return `
+                <article class="menu-row">
+                  <div class="row-content">
+                    <div class="row-top">
+                      <h3 class="item-title">${item.name}</h3>
+                      <span class="item-price">${current.price} ₪</span>
+                    </div>
+                    <p class="item-desc">${item.desc}</p>
+                    ${item.sizes.length > 1 ? `
+                      <div class="sizes">
+                        ${item.sizes.map((sz, i) => `
+                          <button type="button" class="size-btn ${i === idx ? "active" : ""}" onclick="pickSize('${item.id}', ${i})">
+                            ${sz.label} (${sz.price} ₪)
+                          </button>
+                        `).join("")}
+                      </div>
+                    ` : ""}
+                  </div>
+                  <button type="button" class="add-btn" onclick="addItem('${item.id}')">+ הוסף</button>
+                </article>
+              `;
+            }).join("")}
+          </div>
+        </section>
+      `).join("");
+    }
+
+    function pickSize(itemId, idx) {
+      sizeIdx[itemId] = idx;
+      renderList();
+    }
+
+    function getItem(itemId) {
+      for (const s of MENU_DATA) {
+        const found = s.items.find(i => i.id === itemId);
+        if (found) return found;
+      }
+      return null;
+    }
+
+    function addItem(itemId) {
+      const item = getItem(itemId);
+      if (!item) return;
+      const sz = item.sizes[sizeIdx[itemId] || 0];
+      const key = `${item.id}__${sz.label}`;
+      const existing = cart.find(c => c.key === key);
+      if (existing) existing.qty += 1;
+      else cart.push({ key, name: item.name, size: sz.label, price: sz.price, qty: 1 });
+      renderBar();
+    }
+
+    function changeQty(idx, delta) {
+      cart[idx].qty += delta;
+      if (cart[idx].qty <= 0) cart.splice(idx, 1);
+      renderBar();
+      renderSheet();
+    }
+
+    function totals() {
+      return {
+        count: cart.reduce((s, i) => s + i.qty, 0),
+        total: cart.reduce((s, i) => s + i.price * i.qty, 0)
+      };
+    }
+
+    function renderBar() {
+      const { count, total } = totals();
+      document.getElementById("barCount").textContent = count;
+      document.getElementById("barTotal").textContent = `${total} ₪`;
+      document.getElementById("sheetTotal").textContent = `${total} ₪`;
+    }
+
+    function openSheet() {
+      renderSheet();
+      document.getElementById("sheetBackdrop").classList.add("open");
+    }
+
+    function closeSheet() {
+      document.getElementById("sheetBackdrop").classList.remove("open");
+    }
+
+    document.addEventListener("keydown", e => {
+      if (e.key === "Escape") closeSheet();
+    });
+
+    function renderSheet() {
+      const box = document.getElementById("sheetItems");
+      if (!cart.length) {
+        box.innerHTML = `<p class="empty">ההזמנה ריקה כרגע.</p>`;
+        return;
+      }
+      box.innerHTML = cart.map((item, idx) => `
+        <div class="cart-row">
+          <div>
+            <strong>${item.name}</strong>
+            <div style="font-size:0.82rem; color:var(--muted);">${item.size} · ${item.price} ₪</div>
+          </div>
+          <div class="qty-box">
+            <button type="button" class="qty-btn" onclick="changeQty(${idx}, -1)">-</button>
+            <span>${item.qty}</span>
+            <button type="button" class="qty-btn" onclick="changeQty(${idx}, 1)">+</button>
+          </div>
+        </div>
+      `).join("");
+    }
+
+    function previewOrder() {
+      if (!cart.length) {
+        alert("בחר פריטים קודם.");
+        return;
+      }
+      const name = document.getElementById("nameInput").value.trim() || "אורח/ת";
+      const phone = document.getElementById("phoneInput").value.trim() || "ללא טלפון";
+      const note = document.getElementById("noteInput").value.trim();
+      const { total } = totals();
+      const lines = cart.map(i => `• ${i.qty}× ${i.name} (${i.size}) — ${i.price * i.qty} ₪`).join("\n");
+      alert(`דוגמת הזמנה:\nשם: ${name}\nטלפון: ${phone}\n\n${lines}${note ? `\nהערות: ${note}` : ""}\n\nסה"כ: ${total} ₪`);
+    }
+
+    init();
+  </script>
+</body>
+</html>
