@@ -70,6 +70,7 @@
 
     .top-actions {
       display: flex;
+      flex-wrap: wrap;
       align-items: center;
       gap: 8px;
     }
@@ -89,6 +90,12 @@
 
     .btn:hover {
       background: var(--surface-alt);
+    }
+
+    .btn.sound-on {
+      background: var(--accent-soft);
+      border-color: var(--accent);
+      color: var(--accent);
     }
 
     .btn-primary {
@@ -144,6 +151,58 @@
     .input:focus, .select:focus {
       outline: none;
       border-color: var(--accent);
+    }
+
+    /* Daily Summary */
+    .daily-box {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 14px 18px;
+      margin-bottom: 16px;
+    }
+
+    .daily-top {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .daily-title {
+      font-size: 0.95rem;
+      font-weight: 700;
+    }
+
+    .daily-kpis {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+      font-size: 0.88rem;
+      color: var(--muted);
+    }
+
+    .daily-kpis strong {
+      color: var(--ink);
+    }
+
+    .daily-items {
+      margin-top: 10px;
+      padding-top: 10px;
+      border-top: 1px dashed var(--border);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+    }
+
+    .item-chip {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 3px 10px;
+      font-size: 0.8rem;
+      color: var(--ink);
     }
 
     .tabs-bar {
@@ -424,6 +483,7 @@
         <h1>בינינו — מסך תפעול</h1>
       </div>
       <div class="top-actions" id="topActions" style="display:none;">
+        <button type="button" class="btn sound-on" id="soundBtn" onclick="toggleSound()">צליל: פעיל</button>
         <button type="button" class="btn" onclick="refreshAdmin()">רענון</button>
         <button type="button" class="btn" onclick="logout()">נעילה</button>
       </div>
@@ -439,6 +499,14 @@
     </div>
 
     <div id="adminApp" style="display:none;">
+      <section class="daily-box" id="dailySummaryBox">
+        <div class="daily-top">
+          <span class="daily-title" id="dailyDateLabel">סיכום יומי</span>
+          <div class="daily-kpis" id="dailyKpis"></div>
+        </div>
+        <div class="daily-items" id="dailyItems"></div>
+      </section>
+
       <div class="tabs-bar">
         <div class="tabs">
           <button type="button" class="tab-btn active" id="tabOrders" onclick="switchTab('orders')">הזמנות</button>
@@ -515,12 +583,113 @@
   <script>
     const API_URL = "https://script.google.com/macros/s/AKfycbziLXiN0ZaU-yQTln6anOu2vjsRNEAUKq2Jh6mYk1WwymKne9TikZp2gdW3bOGxT0Lb/exec";
     const STORAGE_KEY = "benenu_admin_token_v1";
+    const SOUND_KEY = "benenu_admin_sound_v1";
 
     let token = sessionStorage.getItem(STORAGE_KEY) || "";
+    let soundEnabled = (localStorage.getItem(SOUND_KEY) || "on") === "on";
     let state = { orders: [], items: [], settings: {} };
+    let knownOrderIds = null;
     let currentTab = "orders";
     let orderFilter = "active";
     let pollTimer = null;
+    let audioCtx = null;
+
+    function syncSoundButton() {
+      const btn = document.getElementById("soundBtn");
+      if (!btn) return;
+      btn.textContent = soundEnabled ? "צליל: פעיל" : "צליל: מושתק";
+      btn.classList.toggle("sound-on", soundEnabled);
+    }
+
+    function playNewOrderChime() {
+      if (!soundEnabled) return;
+      try {
+        const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+        if (!AudioContextClass) return;
+        if (!audioCtx) audioCtx = new AudioContextClass();
+        if (audioCtx.state === "suspended") {
+          audioCtx.resume();
+        }
+        const now = audioCtx.currentTime;
+        [660, 880].forEach((freq, idx) => {
+          const osc = audioCtx.createOscillator();
+          const gain = audioCtx.createGain();
+          osc.type = "sine";
+          osc.frequency.setValueAtTime(freq, now + idx * 0.12);
+          gain.gain.setValueAtTime(0.001, now + idx * 0.12);
+          gain.gain.exponentialRampToValueAtTime(0.08, now + idx * 0.12 + 0.02);
+          gain.gain.exponentialRampToValueAtTime(0.0001, now + idx * 0.12 + 0.24);
+          osc.connect(gain);
+          gain.connect(audioCtx.destination);
+          osc.start(now + idx * 0.12);
+          osc.stop(now + idx * 0.12 + 0.26);
+        });
+      } catch (_) {
+        // Ignore browser audio block before first user interaction
+      }
+    }
+
+    function toggleSound() {
+      soundEnabled = !soundEnabled;
+      localStorage.setItem(SOUND_KEY, soundEnabled ? "on" : "off");
+      syncSoundButton();
+      if (soundEnabled) playNewOrderChime();
+    }
+
+    function getTodayIL() {
+      const d = new Date();
+      const pad = n => String(n).padStart(2, "0");
+      return `${pad(d.getDate())}/${pad(d.getMonth() + 1)}/${d.getFullYear()}`;
+    }
+
+    function extractDatePartIL(createdAtStr) {
+      const match = String(createdAtStr || "").match(/(\d{2}\/\d{2}\/\d{4})/);
+      return match ? match[1] : "";
+    }
+
+    function parseItemCounts(ordersList) {
+      const counts = new Map();
+      ordersList.forEach(o => {
+        const parts = String(o.itemsSummary || "").split(",");
+        parts.forEach(part => {
+          const trimmed = part.trim();
+          if (!trimmed) return;
+          const m = trimmed.match(/^(\d+)\s*[xX×]\s*(.+)$/);
+          const qty = m ? Number(m[1]) : 1;
+          const rawLabel = (m ? m[2] : trimmed).trim();
+          if (!rawLabel) return;
+          counts.set(rawLabel, (counts.get(rawLabel) || 0) + (isNaN(qty) ? 1 : qty));
+        });
+      });
+      return Array.from(counts.entries()).sort((a, b) => b[1] - a[1]);
+    }
+
+    function renderDailySummary() {
+      const today = getTodayIL();
+      const allOrders = state.orders || [];
+      const todayOrders = allOrders.filter(o => extractDatePartIL(o.createdAt) === today);
+      const activeToday = todayOrders.filter(o => o.status !== "נמסרה").length;
+      const doneToday = todayOrders.filter(o => o.status === "נמסרה").length;
+      const sumToday = todayOrders.reduce((acc, o) => acc + (Number(o.total) || 0), 0);
+
+      document.getElementById("dailyDateLabel").textContent = `סיכום יומי (${today})`;
+      document.getElementById("dailyKpis").innerHTML = `
+        <span>הזמנות היום: <strong>${todayOrders.length}</strong></span>
+        <span>פעילות: <strong>${activeToday}</strong></span>
+        <span>נמסרו: <strong>${doneToday}</strong></span>
+        <span>סה"כ יומי: <strong>${sumToday} ₪</strong></span>
+      `;
+
+      const itemCounts = parseItemCounts(todayOrders);
+      const itemsEl = document.getElementById("dailyItems");
+      if (!itemCounts.length) {
+        itemsEl.innerHTML = `<span style="font-size:0.82rem; color:var(--muted);">אין עדיין פריטים מוזמנים היום.</span>`;
+        return;
+      }
+      itemsEl.innerHTML = itemCounts.map(([label, qty]) => `
+        <span class="item-chip"><strong>${qty}×</strong> ${label}</span>
+      `).join("");
+    }
 
     function showMsg(text, isErr = false) {
       const el = document.getElementById("toast");
@@ -542,11 +711,13 @@
       }
       token = val;
       sessionStorage.setItem(STORAGE_KEY, token);
-      loadAdminData();
+      knownOrderIds = null;
+      loadAdminData(false);
     }
 
     function logout() {
       token = "";
+      knownOrderIds = null;
       sessionStorage.removeItem(STORAGE_KEY);
       stopPolling();
       document.getElementById("adminApp").style.display = "none";
@@ -596,10 +767,25 @@
         if (!data || !data.ok) {
           throw new Error((data && data.error) || "כניסה נדחתה");
         }
+
+        const incomingOrders = data.orders || [];
+        const incomingIds = new Set(incomingOrders.map(o => String(o.orderId)));
+        if (knownOrderIds !== null) {
+          const brandNew = incomingOrders.filter(o => !knownOrderIds.has(String(o.orderId)));
+          if (brandNew.length > 0) {
+            playNewOrderChime();
+            const nums = brandNew.map(o => `#${o.orderId}`).join(", ");
+            showMsg(`התקבלה הזמנה חדשה: ${nums}`);
+          }
+        }
+        knownOrderIds = incomingIds;
+
         state = data;
         document.getElementById("loginCard").style.display = "none";
         document.getElementById("adminApp").style.display = "block";
         document.getElementById("topActions").style.display = "flex";
+        syncSoundButton();
+        renderDailySummary();
         renderOrders();
         renderMenuList();
         startPolling();
@@ -655,6 +841,7 @@
         await postAdmin({ action: "updateOrderStatus", orderId, status });
         const ord = state.orders.find(o => String(o.orderId) === String(orderId));
         if (ord) ord.status = status;
+        renderDailySummary();
         renderOrders();
         showMsg(`הזמנה #${orderId} עודכנה ל-"${status}".`);
 
@@ -815,6 +1002,7 @@
       }).join("");
     }
 
+    syncSoundButton();
     if (token) {
       loadAdminData(false);
     }
