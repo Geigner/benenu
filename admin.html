@@ -153,58 +153,6 @@
       border-color: var(--accent);
     }
 
-    /* Daily Summary */
-    .daily-box {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 14px 18px;
-      margin-bottom: 16px;
-    }
-
-    .daily-top {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      justify-content: space-between;
-      gap: 10px;
-    }
-
-    .daily-title {
-      font-size: 0.95rem;
-      font-weight: 700;
-    }
-
-    .daily-kpis {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 14px;
-      font-size: 0.88rem;
-      color: var(--muted);
-    }
-
-    .daily-kpis strong {
-      color: var(--ink);
-    }
-
-    .daily-items {
-      margin-top: 10px;
-      padding-top: 10px;
-      border-top: 1px dashed var(--border);
-      display: flex;
-      flex-wrap: wrap;
-      gap: 7px;
-    }
-
-    .item-chip {
-      background: var(--bg);
-      border: 1px solid var(--border);
-      border-radius: 999px;
-      padding: 3px 10px;
-      font-size: 0.8rem;
-      color: var(--ink);
-    }
-
     .tabs-bar {
       display: flex;
       flex-wrap: wrap;
@@ -499,14 +447,6 @@
     </div>
 
     <div id="adminApp" style="display:none;">
-      <section class="daily-box" id="dailySummaryBox">
-        <div class="daily-top">
-          <span class="daily-title" id="dailyDateLabel">סיכום יומי</span>
-          <div class="daily-kpis" id="dailyKpis"></div>
-        </div>
-        <div class="daily-items" id="dailyItems"></div>
-      </section>
-
       <div class="tabs-bar">
         <div class="tabs">
           <button type="button" class="tab-btn active" id="tabOrders" onclick="switchTab('orders')">הזמנות</button>
@@ -624,9 +564,7 @@
           osc.start(now + idx * 0.12);
           osc.stop(now + idx * 0.12 + 0.26);
         });
-      } catch (_) {
-        // Ignore browser audio block before first user interaction
-      }
+      } catch (_) {}
     }
 
     function toggleSound() {
@@ -634,61 +572,6 @@
       localStorage.setItem(SOUND_KEY, soundEnabled ? "on" : "off");
       syncSoundButton();
       if (soundEnabled) playNewOrderChime();
-    }
-
-    function getTodayIL() {
-      const d = new Date();
-      const pad = n => String(n).padStart(2, "0");
-      return `${pad(d.getDate())}/${pad(d.getMonth() + 1)}/${d.getFullYear()}`;
-    }
-
-    function extractDatePartIL(createdAtStr) {
-      const match = String(createdAtStr || "").match(/(\d{2}\/\d{2}\/\d{4})/);
-      return match ? match[1] : "";
-    }
-
-    function parseItemCounts(ordersList) {
-      const counts = new Map();
-      ordersList.forEach(o => {
-        const parts = String(o.itemsSummary || "").split(",");
-        parts.forEach(part => {
-          const trimmed = part.trim();
-          if (!trimmed) return;
-          const m = trimmed.match(/^(\d+)\s*[xX×]\s*(.+)$/);
-          const qty = m ? Number(m[1]) : 1;
-          const rawLabel = (m ? m[2] : trimmed).trim();
-          if (!rawLabel) return;
-          counts.set(rawLabel, (counts.get(rawLabel) || 0) + (isNaN(qty) ? 1 : qty));
-        });
-      });
-      return Array.from(counts.entries()).sort((a, b) => b[1] - a[1]);
-    }
-
-    function renderDailySummary() {
-      const today = getTodayIL();
-      const allOrders = state.orders || [];
-      const todayOrders = allOrders.filter(o => extractDatePartIL(o.createdAt) === today);
-      const activeToday = todayOrders.filter(o => o.status !== "נמסרה").length;
-      const doneToday = todayOrders.filter(o => o.status === "נמסרה").length;
-      const sumToday = todayOrders.reduce((acc, o) => acc + (Number(o.total) || 0), 0);
-
-      document.getElementById("dailyDateLabel").textContent = `סיכום יומי (${today})`;
-      document.getElementById("dailyKpis").innerHTML = `
-        <span>הזמנות היום: <strong>${todayOrders.length}</strong></span>
-        <span>פעילות: <strong>${activeToday}</strong></span>
-        <span>נמסרו: <strong>${doneToday}</strong></span>
-        <span>סה"כ יומי: <strong>${sumToday} ₪</strong></span>
-      `;
-
-      const itemCounts = parseItemCounts(todayOrders);
-      const itemsEl = document.getElementById("dailyItems");
-      if (!itemCounts.length) {
-        itemsEl.innerHTML = `<span style="font-size:0.82rem; color:var(--muted);">אין עדיין פריטים מוזמנים היום.</span>`;
-        return;
-      }
-      itemsEl.innerHTML = itemCounts.map(([label, qty]) => `
-        <span class="item-chip"><strong>${qty}×</strong> ${label}</span>
-      `).join("");
     }
 
     function showMsg(text, isErr = false) {
@@ -785,7 +668,6 @@
         document.getElementById("adminApp").style.display = "block";
         document.getElementById("topActions").style.display = "flex";
         syncSoundButton();
-        renderDailySummary();
         renderOrders();
         renderMenuList();
         startPolling();
@@ -841,7 +723,6 @@
         await postAdmin({ action: "updateOrderStatus", orderId, status });
         const ord = state.orders.find(o => String(o.orderId) === String(orderId));
         if (ord) ord.status = status;
-        renderDailySummary();
         renderOrders();
         showMsg(`הזמנה #${orderId} עודכנה ל-"${status}".`);
 
