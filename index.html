@@ -70,6 +70,23 @@
       margin-top: 4px;
     }
 
+    .closed-banner {
+      display: none;
+      max-width: 680px;
+      margin: 14px auto 0;
+      background: #fdf2ec;
+      color: var(--warm);
+      border: 1px solid #f0d2c2;
+      border-radius: 10px;
+      padding: 9px 14px;
+      font-size: 0.88rem;
+      font-weight: 600;
+    }
+
+    .closed-banner.visible {
+      display: block;
+    }
+
     /* Mobile Category Strip */
     .mobile-strip {
       position: sticky;
@@ -286,10 +303,22 @@
       transition: all 0.15s ease;
     }
 
-    .add-btn:hover {
+    .add-btn:hover:not(:disabled) {
       background: var(--accent);
       border-color: var(--accent);
       color: #fff;
+    }
+
+    .add-btn:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+
+    .status-msg {
+      text-align: center;
+      color: var(--muted);
+      padding: 32px 12px;
+      font-size: 0.95rem;
     }
 
     /* Floating Order Bar */
@@ -361,7 +390,7 @@
       background: var(--surface);
       width: 100%;
       max-width: 560px;
-      max-height: 85vh;
+      max-height: 88vh;
       border-radius: 22px 22px 0 0;
       padding: 22px 20px;
       overflow-y: auto;
@@ -415,16 +444,17 @@
       margin-top: 14px;
     }
 
-    .input {
+    .input, .select {
       width: 100%;
       padding: 10px 12px;
       border-radius: 11px;
       border: 1px solid var(--border);
       font-family: inherit;
       font-size: 0.9rem;
+      background: #fff;
     }
 
-    .input:focus {
+    .input:focus, .select:focus {
       outline: none;
       border-color: var(--accent);
     }
@@ -443,6 +473,33 @@
       cursor: pointer;
     }
 
+    .confirm-btn:disabled {
+      opacity: 0.55;
+      cursor: not-allowed;
+    }
+
+    .feedback {
+      margin-top: 12px;
+      padding: 12px;
+      border-radius: 11px;
+      font-size: 0.9rem;
+      display: none;
+    }
+
+    .feedback.ok {
+      display: block;
+      background: var(--accent-soft);
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    .feedback.err {
+      display: block;
+      background: #fdf2ec;
+      color: var(--warm);
+      font-weight: 600;
+    }
+
     .empty {
       text-align: center;
       color: var(--muted);
@@ -454,15 +511,16 @@
 
   <header>
     <div class="brand-en">benenu</div>
-    <h1>בינינו</h1>
+    <h1 id="businessTitle">בינינו</h1>
     <p class="subtitle">קפה, מאפים וכריכים</p>
+    <div class="closed-banner" id="closedBanner">קבלת הזמנות באתר סגורה כרגע — ניתן לצפות בתפריט</div>
   </header>
 
   <nav class="mobile-strip" id="mobileNav" aria-label="קטגוריות"></nav>
 
   <div class="layout">
     <aside class="side-nav" id="sideNav" aria-label="קטגוריות תפריט"></aside>
-    <main id="menuRoot"></main>
+    <main id="menuRoot"><p class="status-msg">טוען תפריט...</p></main>
   </div>
 
   <div class="order-bar" onclick="openSheet()">
@@ -484,153 +542,100 @@
       </div>
       <div id="sheetItems"></div>
       <div class="inputs">
-        <input type="text" class="input" id="nameInput" placeholder="שם" />
-        <input type="tel" class="input" id="phoneInput" placeholder="טלפון לעדכון כשהזמנה מוכנה" />
-        <input type="text" class="input" id="noteInput" placeholder="הערות (למשל נטול קפאין, בלי קרח, שולחן)" />
+        <input type="text" class="input" id="nameInput" placeholder="שם *" required />
+        <input type="tel" class="input" id="phoneInput" placeholder="טלפון לעדכון כשהזמנה מוכנה *" required />
+        <select class="select" id="pickupSelect">
+          <option value="איסוף">איסוף מהדלפק</option>
+          <option value="שולחן 1">שולחן 1</option>
+          <option value="שולחן 2">שולחן 2</option>
+          <option value="שולחן 3">שולחן 3</option>
+          <option value="שולחן 4">שולחן 4</option>
+        </select>
+        <input type="text" class="input" id="noteInput" placeholder="הערות (למשל נטול קפאין, בלי קרח)" />
       </div>
-      <button type="button" class="confirm-btn" onclick="previewOrder()">
-        סיכום הזמנה · <span id="sheetTotal">0 ₪</span>
+      <button type="button" class="confirm-btn" id="submitBtn" onclick="submitOrder()">
+        שליחת הזמנה · <span id="sheetTotal">0 ₪</span>
       </button>
+      <div class="feedback" id="orderFeedback"></div>
     </div>
   </div>
 
   <script>
-    const MENU_DATA = [
-      {
-        id: "coffee",
-        category: "קפה ומשקאות",
-        sub: "יש קפה נטול",
-        items: [
-          { id: "cold-coffee", name: "קפה קר", desc: "קפה קר רענן", sizes: [{ label: "רגיל", price: 18 }, { label: "גדול", price: 20 }] },
-          { id: "espresso", name: "אספרסו", desc: "קצר ומדויק", sizes: [{ label: "רגיל", price: 10 }] },
-          { id: "iced-americano", name: "אמריקנו קר", desc: "אספרסו ומים קרים על קרח", sizes: [{ label: "רגיל", price: 17 }] },
-          { id: "cortado", name: "קורטדו", desc: "אספרסו עם נגיעת חלב", sizes: [{ label: "רגיל", price: 14 }] },
-          { id: "iced-espresso", name: "אספרסו על קרח", desc: "מנה מרוכזת על קרח", sizes: [{ label: "רגיל", price: 14 }] },
-          { id: "hafuch", name: "הפוך", desc: "קפה הפוך קלאסי", sizes: [{ label: "קטן", price: 15 }, { label: "גדול", price: 19 }] },
-          { id: "choco", name: "שוקו קר", desc: "שוקו קר מפנק", sizes: [{ label: "רגיל", price: 19 }, { label: "גדול", price: 22 }] },
-          { id: "matcha", name: "מאצ'ה קר", desc: "מאצ'ה על בסיס קר", sizes: [{ label: "רגיל", price: 17 }, { label: "גדול", price: 26 }] },
-          { id: "americano", name: "אמריקנו", desc: "אספרסו עם מים חמים", sizes: [{ label: "רגיל", price: 14 }] },
-          { id: "turmeric-chai", name: "צ'אי כורכום קר", desc: "תבלינים וכורכום על קר", sizes: [{ label: "רגיל", price: 22 }] },
-          { id: "macchiato", name: "מקיאטו", desc: "אספרסו עם קצף", sizes: [{ label: "רגיל", price: 13 }] },
-          { id: "iced-tea-v60", name: "תה קר V60", desc: "חליטה קרה", sizes: [{ label: "רגיל", price: 18 }] },
-          { id: "black-coffee", name: "קפה שחור", desc: "קפה שחור קלאסי", sizes: [{ label: "רגיל", price: 10 }] },
-          { id: "natural-juice", name: "מיץ טבעי", desc: "מיץ טבעי", sizes: [{ label: "רגיל", price: 18 }] },
-          { id: "soda", name: "סודה", desc: "סודה קרה", sizes: [{ label: "רגיל", price: 10 }] }
-        ]
-      },
-      {
-        id: "tea-weight",
-        category: "חליטות וקפה במשקל",
-        sub: "חליטות אורגניות וקפה לבית",
-        items: [
-          {
-            id: "herbal",
-            name: "חליטות אורגניות",
-            desc: "קמומיל הדרים / תה שחור / יסמין / צ'אי (הכל אורגני ושמח)",
-            sizes: [{ label: "רגיל", price: 17 }]
-          },
-          {
-            id: "leaf-tea",
-            name: "תה נענע / קינמון / לימון / דבש",
-            desc: "חליטה חמה",
-            sizes: [{ label: "רגיל", price: 10 }]
-          },
-          {
-            id: "by-weight",
-            name: "קפה במשקל",
-            desc: "לבית",
-            sizes: [{ label: "רגיל", price: 30 }, { label: "גדול", price: 75 }]
-          }
-        ]
-      },
-      {
-        id: "pastries",
-        category: "מאפים ועוגות",
-        sub: "מאפים טריים ועוגות",
-        items: [
-          {
-            id: "croissants",
-            name: "קרואסונים",
-            desc: "חמאה או שוקולד",
-            sizes: [{ label: "רגיל", price: 19 }]
-          },
-          {
-            id: "vegan-pastries",
-            name: "מאפים טבעוניים",
-            desc: "רול קינמון, חלבה, מייפל, פיצוחים",
-            sizes: [{ label: "רגיל", price: 19 }]
-          },
-          {
-            id: "savory-pastries",
-            name: "מאפים מלוחים",
-            desc: "זיתים וגבינות, פרמז'ן, פסטו, עגבניות מיובשות",
-            sizes: [{ label: "רגיל", price: 13 }, { label: "גדול", price: 19 }]
-          },
-          {
-            id: "cakes",
-            name: "עוגות",
-            desc: "גזר הדרים, רוזמרין לימון, פירות יער טימין, בננה שוקולד",
-            sizes: [{ label: "רגיל", price: 18 }]
-          }
-        ]
-      },
-      {
-        id: "sandwiches",
-        category: "כריכים",
-        sub: "39 ₪ · ללא גלוטן בתוספת 3 ₪",
-        items: [
-          {
-            id: "egg-vegan",
-            name: "סלט ביצים *טבעוני*",
-            desc: "בחלת כוסמין, שמיר ובצל ירוק",
-            sizes: [{ label: "רגיל", price: 39 }, { label: "ללא גלוטן (+3 ₪)", price: 42 }]
-          },
-          {
-            id: "manchego",
-            name: "מנצ'גו",
-            desc: "ריבת שרי טימין, טפנד זיתים, רוקט, בלסמי מצומצם",
-            sizes: [{ label: "רגיל", price: 39 }, { label: "ללא גלוטן (+3 ₪)", price: 42 }]
-          },
-          {
-            id: "feta",
-            name: "פטה",
-            desc: "ממרח ירוק, שקדים קלויים, חסה לאליק, עלי בזיל, סלק",
-            sizes: [{ label: "רגיל", price: 39 }, { label: "ללא גלוטן (+3 ₪)", price: 42 }]
-          },
-          {
-            id: "cashew",
-            name: "גבינת קשיו",
-            desc: "סלק, חסה לאליק, זעתר, סומק, שמן זית ומייפל",
-            sizes: [{ label: "רגיל", price: 39 }, { label: "ללא גלוטן (+3 ₪)", price: 42 }]
-          },
-          {
-            id: "toast-manchego",
-            name: "טוסט מנצ'גו",
-            desc: "ריבת שרי טימין, טפנד זיתים, זעתר ושום",
-            sizes: [{ label: "רגיל", price: 39 }, { label: "ללא גלוטן (+3 ₪)", price: 42 }]
-          }
-        ]
-      }
-    ];
+    const API_URL = "https://script.google.com/macros/s/AKfycbziLXiN0ZaU-yQTln6anOu2vjsRNEAUKq2Jh6mYk1WwymKne9TikZp2gdW3bOGxT0Lb/exec";
 
-    let activeId = MENU_DATA[0].id;
+    let sections = [];
+    let ordersOpen = true;
+    let activeId = "";
     const sizeIdx = {};
     const cart = [];
 
-    function init() {
-      MENU_DATA.forEach(s => s.items.forEach(i => { sizeIdx[i.id] = 0; }));
-      renderNavs();
-      renderList();
-      renderBar();
-      observeSections();
+    function slugifyCategory(cat) {
+      return "cat-" + encodeURIComponent(String(cat || "").trim().toLowerCase().replace(/\s+/g, "-"));
+    }
+
+    function groupItemsToSections(items) {
+      const map = new Map();
+      items.forEach(item => {
+        const cat = item.category || "כללי";
+        if (!map.has(cat)) {
+          map.set(cat, {
+            id: slugifyCategory(cat),
+            category: cat,
+            sub: item.category_note || "",
+            items: []
+          });
+        }
+        const sizes = Array.isArray(item.sizes) && item.sizes.length
+          ? item.sizes
+          : [{ label: "רגיל", price: 0 }];
+        map.get(cat).items.push({
+          id: item.item_id || item.name,
+          name: item.name,
+          desc: item.desc || "",
+          sizes
+        });
+      });
+      return Array.from(map.values());
+    }
+
+    async function loadMenuFromSheet() {
+      try {
+        const res = await fetch(`${API_URL}?action=public`);
+        const data = await res.json();
+        if (!data || !data.ok) {
+          throw new Error((data && data.error) || "שגיאה בטעינת התפריט");
+        }
+
+        if (data.businessName) {
+          document.getElementById("businessTitle").textContent = data.businessName;
+        }
+        ordersOpen = data.ordersOpen !== false;
+        document.getElementById("closedBanner").classList.toggle("visible", !ordersOpen);
+        document.getElementById("submitBtn").disabled = !ordersOpen;
+
+        sections = groupItemsToSections(data.items || []);
+        sections.forEach(s => s.items.forEach(i => {
+          if (sizeIdx[i.id] === undefined) sizeIdx[i.id] = 0;
+        }));
+
+        if (sections.length) {
+          activeId = sections[0].id;
+        }
+        renderNavs();
+        renderList();
+        observeSections();
+      } catch (err) {
+        document.getElementById("menuRoot").innerHTML =
+          `<p class="status-msg">לא הצלחנו לטעון את התפריט כרגע. נסה לרענן את העמוד.</p>`;
+      }
     }
 
     function renderNavs() {
-      document.getElementById("sideNav").innerHTML = MENU_DATA.map(s => `
+      document.getElementById("sideNav").innerHTML = sections.map(s => `
         <a href="#${s.id}" class="side-link ${s.id === activeId ? "active" : ""}" data-nav="${s.id}">${s.category}</a>
       `).join("");
 
-      document.getElementById("mobileNav").innerHTML = MENU_DATA.map(s => `
+      document.getElementById("mobileNav").innerHTML = sections.map(s => `
         <a href="#${s.id}" class="mobile-link ${s.id === activeId ? "active" : ""}" data-nav="${s.id}">${s.category}</a>
       `).join("");
     }
@@ -653,7 +658,12 @@
     }
 
     function renderList() {
-      document.getElementById("menuRoot").innerHTML = MENU_DATA.map(sec => `
+      if (!sections.length) {
+        document.getElementById("menuRoot").innerHTML = `<p class="status-msg">אין כרגע פריטים פעילים בתפריט.</p>`;
+        return;
+      }
+
+      document.getElementById("menuRoot").innerHTML = sections.map(sec => `
         <section class="section-block" id="${sec.id}">
           <div class="section-head">
             <h2 class="section-title">${sec.category}</h2>
@@ -662,7 +672,7 @@
           <div class="menu-list">
             ${sec.items.map(item => {
               const idx = sizeIdx[item.id] || 0;
-              const current = item.sizes[idx];
+              const current = item.sizes[idx] || item.sizes[0];
               return `
                 <article class="menu-row">
                   <div class="row-content">
@@ -674,14 +684,14 @@
                     ${item.sizes.length > 1 ? `
                       <div class="sizes">
                         ${item.sizes.map((sz, i) => `
-                          <button type="button" class="size-btn ${i === idx ? "active" : ""}" onclick="pickSize('${item.id}', ${i})">
+                          <button type="button" class="size-btn ${i === idx ? "active" : ""}" onclick="pickSize('${item.id.replace(/'/g, "\\'")}', ${i})">
                             ${sz.label} (${sz.price} ₪)
                           </button>
                         `).join("")}
                       </div>
                     ` : ""}
                   </div>
-                  <button type="button" class="add-btn" onclick="addItem('${item.id}')">+ הוסף</button>
+                  <button type="button" class="add-btn" onclick="addItem('${item.id.replace(/'/g, "\\'")}')">+ הוסף</button>
                 </article>
               `;
             }).join("")}
@@ -696,7 +706,7 @@
     }
 
     function getItem(itemId) {
-      for (const s of MENU_DATA) {
+      for (const s of sections) {
         const found = s.items.find(i => i.id === itemId);
         if (found) return found;
       }
@@ -706,11 +716,11 @@
     function addItem(itemId) {
       const item = getItem(itemId);
       if (!item) return;
-      const sz = item.sizes[sizeIdx[itemId] || 0];
+      const sz = item.sizes[sizeIdx[itemId] || 0] || item.sizes[0];
       const key = `${item.id}__${sz.label}`;
       const existing = cart.find(c => c.key === key);
       if (existing) existing.qty += 1;
-      else cart.push({ key, name: item.name, size: sz.label, price: sz.price, qty: 1 });
+      else cart.push({ key, name: item.name, size: sz.label, price: Number(sz.price) || 0, qty: 1 });
       renderBar();
     }
 
@@ -736,6 +746,8 @@
     }
 
     function openSheet() {
+      document.getElementById("orderFeedback").className = "feedback";
+      document.getElementById("orderFeedback").textContent = "";
       renderSheet();
       document.getElementById("sheetBackdrop").classList.add("open");
     }
@@ -769,20 +781,78 @@
       `).join("");
     }
 
-    function previewOrder() {
-      if (!cart.length) {
-        alert("בחר פריטים קודם.");
+    async function submitOrder() {
+      const fb = document.getElementById("orderFeedback");
+      fb.className = "feedback";
+
+      if (!ordersOpen) {
+        fb.className = "feedback err";
+        fb.textContent = "קבלת הזמנות סגורה כרגע.";
         return;
       }
-      const name = document.getElementById("nameInput").value.trim() || "אורח/ת";
-      const phone = document.getElementById("phoneInput").value.trim() || "ללא טלפון";
+      if (!cart.length) {
+        fb.className = "feedback err";
+        fb.textContent = "בחר לפחות פריט אחד לפני שליחה.";
+        return;
+      }
+
+      const name = document.getElementById("nameInput").value.trim();
+      const phone = document.getElementById("phoneInput").value.trim();
+      const tableOrPickup = document.getElementById("pickupSelect").value;
       const note = document.getElementById("noteInput").value.trim();
+
+      if (!name || !phone) {
+        fb.className = "feedback err";
+        fb.textContent = "יש למלא שם ומספר טלפון.";
+        return;
+      }
+
       const { total } = totals();
-      const lines = cart.map(i => `• ${i.qty}× ${i.name} (${i.size}) — ${i.price * i.qty} ₪`).join("\n");
-      alert(`דוגמת הזמנה:\nשם: ${name}\nטלפון: ${phone}\n\n${lines}${note ? `\nהערות: ${note}` : ""}\n\nסה"כ: ${total} ₪`);
+      const itemsSummary = cart
+        .map(i => `${i.qty}x ${i.name}${i.size && i.size !== "רגיל" ? ` (${i.size})` : ""}`)
+        .join(", ");
+
+      const btn = document.getElementById("submitBtn");
+      btn.disabled = true;
+      btn.textContent = "שולח הזמנה...";
+
+      try {
+        // שימוש ב-text/plain מונע בקשת preflight בעייתית מול Apps Script
+        const res = await fetch(API_URL, {
+          method: "POST",
+          headers: { "Content-Type": "text/plain;charset=utf-8" },
+          body: JSON.stringify({
+            action: "createOrder",
+            name,
+            phone,
+            tableOrPickup,
+            itemsSummary,
+            note,
+            total
+          })
+        });
+        const data = await res.json();
+        if (!data || !data.ok) {
+          throw new Error((data && data.error) || "שגיאה בשליחת ההזמנה");
+        }
+
+        fb.className = "feedback ok";
+        fb.textContent = `ההזמנה התקבלה בהצלחה! מספר הזמנה: #${data.orderId}`;
+        cart.length = 0;
+        renderBar();
+        renderSheet();
+        document.getElementById("noteInput").value = "";
+      } catch (err) {
+        fb.className = "feedback err";
+        fb.textContent = `לא הצלחנו לשלוח את ההזמנה: ${err.message}`;
+      } finally {
+        btn.disabled = !ordersOpen;
+        btn.innerHTML = `שליחת הזמנה · <span id="sheetTotal">${totals().total} ₪</span>`;
+      }
     }
 
-    init();
+    renderBar();
+    loadMenuFromSheet();
   </script>
 </body>
 </html>
