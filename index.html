@@ -309,11 +309,6 @@
       color: #fff;
     }
 
-    .add-btn:disabled {
-      opacity: 0.45;
-      cursor: not-allowed;
-    }
-
     .status-msg {
       text-align: center;
       color: var(--muted);
@@ -598,9 +593,16 @@
       return Array.from(map.values());
     }
 
+    function updateSubmitButtonLabel() {
+      const btn = document.getElementById("submitBtn");
+      const { total } = totals();
+      btn.disabled = !ordersOpen;
+      btn.innerHTML = `שליחת הזמנה · <span id="sheetTotal">${total} ₪</span>`;
+    }
+
     async function loadMenuFromSheet() {
       try {
-        const res = await fetch(`${API_URL}?action=public`);
+        const res = await fetch(`${API_URL}?action=public&_t=${Date.now()}`, { cache: "no-store" });
         const data = await res.json();
         if (!data || !data.ok) {
           throw new Error((data && data.error) || "שגיאה בטעינת התפריט");
@@ -611,7 +613,7 @@
         }
         ordersOpen = data.ordersOpen !== false;
         document.getElementById("closedBanner").classList.toggle("visible", !ordersOpen);
-        document.getElementById("submitBtn").disabled = !ordersOpen;
+        updateSubmitButtonLabel();
 
         sections = groupItemsToSections(data.items || []);
         sections.forEach(s => s.items.forEach(i => {
@@ -742,13 +744,15 @@
       const { count, total } = totals();
       document.getElementById("barCount").textContent = count;
       document.getElementById("barTotal").textContent = `${total} ₪`;
-      document.getElementById("sheetTotal").textContent = `${total} ₪`;
+      const sheetTotalEl = document.getElementById("sheetTotal");
+      if (sheetTotalEl) sheetTotalEl.textContent = `${total} ₪`;
     }
 
     function openSheet() {
       document.getElementById("orderFeedback").className = "feedback";
       document.getElementById("orderFeedback").textContent = "";
       renderSheet();
+      renderBar();
       document.getElementById("sheetBackdrop").classList.add("open");
     }
 
@@ -817,7 +821,6 @@
       btn.textContent = "שולח הזמנה...";
 
       try {
-        // שימוש ב-text/plain מונע בקשת preflight בעייתית מול Apps Script
         const res = await fetch(API_URL, {
           method: "POST",
           headers: { "Content-Type": "text/plain;charset=utf-8" },
@@ -846,8 +849,7 @@
         fb.className = "feedback err";
         fb.textContent = `לא הצלחנו לשלוח את ההזמנה: ${err.message}`;
       } finally {
-        btn.disabled = !ordersOpen;
-        btn.innerHTML = `שליחת הזמנה · <span id="sheetTotal">${totals().total} ₪</span>`;
+        updateSubmitButtonLabel();
       }
     }
 
