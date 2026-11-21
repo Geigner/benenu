@@ -87,6 +87,26 @@
       display: block;
     }
 
+    .order-toast {
+      position: fixed;
+      top: 16px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--accent);
+      color: #fff;
+      padding: 10px 18px;
+      border-radius: 12px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      box-shadow: 0 10px 24px rgba(20, 17, 15, 0.2);
+      z-index: 80;
+      display: none;
+    }
+
+    .order-toast.show {
+      display: block;
+    }
+
     /* Mobile Category Strip */
     .mobile-strip {
       position: sticky;
@@ -309,6 +329,11 @@
       color: #fff;
     }
 
+    .add-btn:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+
     .status-msg {
       text-align: center;
       color: var(--muted);
@@ -439,7 +464,7 @@
       margin-top: 14px;
     }
 
-    .input, .select {
+    .input {
       width: 100%;
       padding: 10px 12px;
       border-radius: 11px;
@@ -449,7 +474,7 @@
       background: #fff;
     }
 
-    .input:focus, .select:focus {
+    .input:focus {
       outline: none;
       border-color: var(--accent);
     }
@@ -504,10 +529,12 @@
 </head>
 <body>
 
+  <div class="order-toast" id="orderToast"></div>
+
   <header>
     <div class="brand-en">benenu</div>
     <h1 id="businessTitle">בינינו</h1>
-    <p class="subtitle">קפה, מאפים וכריכים</p>
+    <p class="subtitle">קפה, מאפים וכריכים · איסוף מהדלפק</p>
     <div class="closed-banner" id="closedBanner">קבלת הזמנות באתר סגורה כרגע — ניתן לצפות בתפריט</div>
   </header>
 
@@ -539,13 +566,6 @@
       <div class="inputs">
         <input type="text" class="input" id="nameInput" placeholder="שם *" required />
         <input type="tel" class="input" id="phoneInput" placeholder="טלפון לעדכון כשהזמנה מוכנה *" required />
-        <select class="select" id="pickupSelect">
-          <option value="איסוף">איסוף מהדלפק</option>
-          <option value="שולחן 1">שולחן 1</option>
-          <option value="שולחן 2">שולחן 2</option>
-          <option value="שולחן 3">שולחן 3</option>
-          <option value="שולחן 4">שולחן 4</option>
-        </select>
         <input type="text" class="input" id="noteInput" placeholder="הערות (למשל נטול קפאין, בלי קרח)" />
       </div>
       <button type="button" class="confirm-btn" id="submitBtn" onclick="submitOrder()">
@@ -561,8 +581,17 @@
     let sections = [];
     let ordersOpen = true;
     let activeId = "";
+    let toastTimer = null;
     const sizeIdx = {};
     const cart = [];
+
+    function showToast(text) {
+      const el = document.getElementById("orderToast");
+      el.textContent = text;
+      el.classList.add("show");
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => el.classList.remove("show"), 4000);
+    }
 
     function slugifyCategory(cat) {
       return "cat-" + encodeURIComponent(String(cat || "").trim().toLowerCase().replace(/\s+/g, "-"));
@@ -802,7 +831,6 @@
 
       const name = document.getElementById("nameInput").value.trim();
       const phone = document.getElementById("phoneInput").value.trim();
-      const tableOrPickup = document.getElementById("pickupSelect").value;
       const note = document.getElementById("noteInput").value.trim();
 
       if (!name || !phone) {
@@ -828,7 +856,7 @@
             action: "createOrder",
             name,
             phone,
-            tableOrPickup,
+            tableOrPickup: "דלפק",
             itemsSummary,
             note,
             total
@@ -839,12 +867,13 @@
           throw new Error((data && data.error) || "שגיאה בשליחת ההזמנה");
         }
 
-        fb.className = "feedback ok";
-        fb.textContent = `ההזמנה התקבלה בהצלחה! מספר הזמנה: #${data.orderId}`;
+        const orderNum = data.orderId;
         cart.length = 0;
+        document.getElementById("noteInput").value = "";
         renderBar();
         renderSheet();
-        document.getElementById("noteInput").value = "";
+        closeSheet();
+        showToast(`הזמנה #${orderNum} נשלחה בהצלחה!`);
       } catch (err) {
         fb.className = "feedback err";
         fb.textContent = `לא הצלחנו לשלוח את ההזמנה: ${err.message}`;
