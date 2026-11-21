@@ -112,6 +112,35 @@
       background: var(--surface-alt);
     }
 
+    /* Compact sticky start button when scrolled past header in view mode */
+    .scroll-order-fab {
+      display: none;
+      position: fixed;
+      bottom: 16px;
+      left: 16px;
+      z-index: 28;
+      border: 1px solid var(--accent);
+      background: var(--accent);
+      color: #fff;
+      font-family: inherit;
+      font-size: 0.84rem;
+      font-weight: 700;
+      padding: 9px 15px;
+      border-radius: 999px;
+      box-shadow: 0 8px 20px rgba(20, 17, 15, 0.2);
+      cursor: pointer;
+    }
+
+    .scroll-order-fab.show {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    body.ordering-mode .scroll-order-fab {
+      display: none;
+    }
+
     .closed-banner {
       display: none;
       max-width: 680px;
@@ -222,6 +251,26 @@
         color: var(--ink);
         font-weight: 600;
         background: var(--surface-alt);
+      }
+
+      .side-order-btn {
+        margin-top: 10px;
+        border: 1px solid var(--accent);
+        background: var(--accent);
+        color: #fff;
+        font-family: inherit;
+        font-size: 0.84rem;
+        font-weight: 600;
+        padding: 7px 10px;
+        border-radius: 9px;
+        cursor: pointer;
+        text-align: center;
+      }
+
+      body.ordering-mode .side-order-btn {
+        background: var(--surface);
+        color: var(--ink);
+        border-color: var(--border);
       }
     }
 
@@ -620,6 +669,8 @@
     <div class="closed-banner" id="closedBanner">קבלת הזמנות באתר סגורה כרגע — ניתן לצפות בתפריט</div>
   </header>
 
+  <button type="button" class="scroll-order-fab" id="scrollOrderFab" onclick="toggleOrderingMode()">התחל הזמנה</button>
+
   <nav class="mobile-strip" id="mobileNav" aria-label="קטגוריות"></nav>
 
   <div class="layout">
@@ -676,13 +727,26 @@
     const sizeIdx = {};
     const cart = [];
 
+    function updateScrollFab() {
+      const fab = document.getElementById("scrollOrderFab");
+      const shouldShow = !orderingMode && ordersOpen && window.scrollY > 190;
+      fab.classList.toggle("show", shouldShow);
+    }
+
+    window.addEventListener("scroll", updateScrollFab, { passive: true });
+
     function setOrderingMode(enable) {
       if (enable && !ordersOpen) return;
       orderingMode = enable;
       document.body.classList.toggle("ordering-mode", orderingMode);
       const btn = document.getElementById("orderTriggerBtn");
       btn.textContent = orderingMode ? "יציאה מהזמנה" : "התחל הזמנה";
+      const sideBtn = document.getElementById("sideOrderBtn");
+      if (sideBtn) {
+        sideBtn.textContent = orderingMode ? "יציאה מהזמנה" : "התחל הזמנה";
+      }
       if (!orderingMode) closeSheet();
+      updateScrollFab();
     }
 
     function toggleOrderingMode() {
@@ -739,7 +803,9 @@
         ordersOpen = data.ordersOpen !== false;
         document.getElementById("closedBanner").classList.toggle("visible", !ordersOpen);
         document.getElementById("orderTriggerBtn").disabled = !ordersOpen;
+        document.getElementById("scrollOrderFab").disabled = !ordersOpen;
         if (!ordersOpen) setOrderingMode(false);
+        updateScrollFab();
         updateSubmitButtonLabel();
 
         sections = groupItemsToSections(data.items || []);
@@ -760,9 +826,13 @@
     }
 
     function renderNavs() {
-      document.getElementById("sideNav").innerHTML = sections.map(s => `
+      const linksHtml = sections.map(s => `
         <a href="#${s.id}" class="side-link ${s.id === activeId ? "active" : ""}" data-nav="${s.id}">${s.category}</a>
       `).join("");
+      const sideActionHtml = ordersOpen
+        ? `<button type="button" class="side-order-btn" id="sideOrderBtn" onclick="toggleOrderingMode()">${orderingMode ? "יציאה מהזמנה" : "התחל הזמנה"}</button>`
+        : "";
+      document.getElementById("sideNav").innerHTML = linksHtml + sideActionHtml;
 
       document.getElementById("mobileNav").innerHTML = sections.map(s => `
         <a href="#${s.id}" class="mobile-link ${s.id === activeId ? "active" : ""}" data-nav="${s.id}">${s.category}</a>
