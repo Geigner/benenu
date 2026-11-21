@@ -1,0 +1,721 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>בינינו · benenu — ניהול</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #faf8f5;
+      --surface: #ffffff;
+      --surface-alt: #f3efe9;
+      --ink: #221e1b;
+      --muted: #6f675f;
+      --accent: #395241;
+      --accent-soft: #eef3ef;
+      --warm: #a85b32;
+      --warm-soft: #fdf2ec;
+      --border: #e6dfd5;
+      --radius: 14px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Heebo', sans-serif;
+      background: var(--bg);
+      color: var(--ink);
+      line-height: 1.5;
+      padding: 24px 16px 72px;
+    }
+
+    .wrap {
+      max-width: 940px;
+      margin: 0 auto;
+    }
+
+    header {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 18px 20px;
+      margin-bottom: 18px;
+    }
+
+    .brand-sub {
+      font-size: 0.76rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    h1 {
+      font-size: 1.5rem;
+      font-weight: 700;
+    }
+
+    .top-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn {
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--ink);
+      font-family: inherit;
+      font-size: 0.85rem;
+      font-weight: 600;
+      padding: 8px 13px;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .btn:hover {
+      background: var(--surface-alt);
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #fff;
+    }
+
+    .btn-primary:hover {
+      background: #2d4234;
+    }
+
+    .btn-wa {
+      background: #1f7a4c;
+      border-color: #1f7a4c;
+      color: #fff;
+    }
+
+    .btn-wa:hover {
+      background: #17613b;
+    }
+
+    .login-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px 20px;
+      max-width: 420px;
+      margin: 32px auto;
+    }
+
+    .login-card h2 {
+      font-size: 1.2rem;
+      margin-bottom: 6px;
+    }
+
+    .login-card p {
+      font-size: 0.88rem;
+      color: var(--muted);
+      margin-bottom: 14px;
+    }
+
+    .input, .select {
+      width: 100%;
+      padding: 10px 12px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      font-family: inherit;
+      font-size: 0.9rem;
+      background: #fff;
+    }
+
+    .input:focus, .select:focus {
+      outline: none;
+      border-color: var(--accent);
+    }
+
+    .tabs-bar {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+
+    .tabs {
+      display: flex;
+      gap: 8px;
+    }
+
+    .tab-btn {
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--muted);
+      font-family: inherit;
+      font-size: 0.9rem;
+      font-weight: 600;
+      padding: 9px 16px;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+
+    .tab-btn.active {
+      background: var(--ink);
+      border-color: var(--ink);
+      color: #fff;
+    }
+
+    .orders-list {
+      display: grid;
+      gap: 12px;
+    }
+
+    .order-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px 18px;
+    }
+
+    .order-head {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      padding-bottom: 10px;
+      margin-bottom: 10px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .order-id {
+      font-weight: 700;
+      font-size: 1.05rem;
+    }
+
+    .order-meta {
+      font-size: 0.82rem;
+      color: var(--muted);
+    }
+
+    .badge {
+      font-size: 0.78rem;
+      font-weight: 700;
+      padding: 3px 10px;
+      border-radius: 999px;
+      background: var(--surface-alt);
+      color: var(--ink);
+    }
+
+    .badge.מוכנה {
+      background: var(--accent-soft);
+      color: var(--accent);
+    }
+
+    .badge.בהכנה {
+      background: var(--warm-soft);
+      color: var(--warm);
+    }
+
+    .order-items {
+      font-size: 0.95rem;
+      font-weight: 500;
+      margin-bottom: 6px;
+    }
+
+    .order-note {
+      font-size: 0.85rem;
+      color: var(--warm);
+      margin-bottom: 10px;
+    }
+
+    .order-foot {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding-top: 10px;
+      border-top: 1px dashed var(--border);
+    }
+
+    .status-select {
+      padding: 7px 10px;
+      border-radius: 9px;
+      border: 1px solid var(--border);
+      font-family: inherit;
+      font-size: 0.86rem;
+      background: #fff;
+    }
+
+    .menu-admin-list {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+
+    .menu-admin-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 13px 16px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .menu-admin-row:last-child {
+      border-bottom: none;
+    }
+
+    .row-btns {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .avail-pill {
+      font-size: 0.78rem;
+      font-weight: 700;
+      padding: 3px 9px;
+      border-radius: 999px;
+    }
+
+    .avail-on {
+      background: var(--accent-soft);
+      color: var(--accent);
+    }
+
+    .avail-off {
+      background: var(--warm-soft);
+      color: var(--warm);
+    }
+
+    /* Item Editor Modal */
+    .backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(20, 17, 15, 0.45);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      z-index: 60;
+    }
+
+    .backdrop.open {
+      display: flex;
+    }
+
+    .modal-box {
+      background: var(--surface);
+      width: 100%;
+      max-width: 500px;
+      border-radius: 18px;
+      padding: 20px;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+
+    .modal-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 14px;
+    }
+
+    .form-field {
+      margin-bottom: 11px;
+    }
+
+    .form-field label {
+      display: block;
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--muted);
+      margin-bottom: 4px;
+    }
+
+    .msg {
+      padding: 10px 14px;
+      border-radius: 10px;
+      font-size: 0.88rem;
+      margin-bottom: 12px;
+      display: none;
+    }
+
+    .msg.show {
+      display: block;
+      background: var(--accent-soft);
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    .msg.err {
+      display: block;
+      background: var(--warm-soft);
+      color: var(--warm);
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div>
+        <div class="brand-sub">benenu · ניהול</div>
+        <h1>בינינו — מסך תפעול</h1>
+      </div>
+      <div class="top-actions" id="topActions" style="display:none;">
+        <button type="button" class="btn" onclick="refreshAdmin()">רענון</button>
+        <button type="button" class="btn" onclick="logout()">נעילה</button>
+      </div>
+    </header>
+
+    <div class="msg" id="toast"></div>
+
+    <div class="login-card" id="loginCard">
+      <h2>כניסה לממשק הניהול</h2>
+      <p>הזן את קוד הניהול (<code>admin_token</code>) המוגדר בלשונית <code>הגדרות</code> בשיטס.</p>
+      <input type="password" class="input" id="tokenInput" placeholder="קוד ניהול" onkeydown="if (event.key === 'Enter') login()" />
+      <button type="button" class="btn btn-primary" style="width:100%;" onclick="login()">כניסה</button>
+    </div>
+
+    <div id="adminApp" style="display:none;">
+      <div class="tabs-bar">
+        <div class="tabs">
+          <button type="button" class="tab-btn active" id="tabOrders" onclick="switchTab('orders')">הזמנות</button>
+          <button type="button" class="tab-btn" id="tabMenu" onclick="switchTab('menu')">ניהול תפריט</button>
+        </div>
+        <button type="button" class="btn btn-primary" id="addItemBtn" style="display:none;" onclick="openItemModal()">+ הוסף פריט</button>
+      </div>
+
+      <div id="ordersPanel" class="orders-list"></div>
+      <div id="menuPanel" class="menu-admin-list" style="display:none;"></div>
+    </div>
+  </div>
+
+  <!-- Modal for Add / Edit Menu Item -->
+  <div class="backdrop" id="itemBackdrop" onclick="if (event.target.id === 'itemBackdrop') closeItemModal()">
+    <div class="modal-box" onclick="event.stopPropagation()">
+      <div class="modal-head">
+        <h2 id="modalTitle">פריט תפריט</h2>
+        <button type="button" class="btn" onclick="closeItemModal()">✕</button>
+      </div>
+      <form onsubmit="submitItemForm(event)">
+        <div class="form-field">
+          <label>מזהה פריט (באנגלית, למשל cold-coffee)</label>
+          <input type="text" class="input" id="fItemId" placeholder="ייווצר אוטומטית אם יישאר ריק" />
+        </div>
+        <div class="form-field">
+          <label>קטגוריה *</label>
+          <input type="text" class="input" id="fCategory" required list="catSuggestions" placeholder="קפה ומשקאות" />
+          <datalist id="catSuggestions">
+            <option value="קפה ומשקאות">
+            <option value="חליטות וקפה במשקל">
+            <option value="מאפים ועוגות">
+            <option value="כריכים">
+          </datalist>
+        </div>
+        <div class="form-field">
+          <label>הערת קטגוריה</label>
+          <input type="text" class="input" id="fCatNote" placeholder="למשל: יש קפה נטול" />
+        </div>
+        <div class="form-field">
+          <label>שם פריט *</label>
+          <input type="text" class="input" id="fName" required placeholder="למשל: הפוך" />
+        </div>
+        <div class="form-field">
+          <label>תיאור</label>
+          <input type="text" class="input" id="fDesc" placeholder="תיאור קצר" />
+        </div>
+        <div class="form-field">
+          <label>אפשרויות ומחירים *</label>
+          <input type="text" class="input" id="fOptions" required placeholder="למשל: רגיל:18 | גדול:20" />
+        </div>
+        <div class="form-field">
+          <label>זמינות</label>
+          <select class="select" id="fAvail">
+            <option value="פעיל">פעיל</option>
+            <option value="אזל">אזל</option>
+          </select>
+        </div>
+        <div class="form-field">
+          <label>סדר תצוגה</label>
+          <input type="number" class="input" id="fOrder" value="1" min="1" />
+        </div>
+        <button type="submit" class="btn btn-primary" style="width:100%;" id="saveItemBtn">שמור לשיטס</button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    const API_URL = "https://script.google.com/macros/s/AKfycbziLXiN0ZaU-yQTln6anOu2vjsRNEAUKq2Jh6mYk1WwymKne9TikZp2gdW3bOGxT0Lb/exec";
+    const STORAGE_KEY = "benenu_admin_token_v1";
+
+    let token = sessionStorage.getItem(STORAGE_KEY) || "";
+    let state = { orders: [], items: [], settings: {} };
+    let currentTab = "orders";
+
+    function showMsg(text, isErr = false) {
+      const el = document.getElementById("toast");
+      el.textContent = text;
+      el.className = isErr ? "msg err" : "msg show";
+    }
+
+    function clearMsg() {
+      const el = document.getElementById("toast");
+      el.className = "msg";
+      el.textContent = "";
+    }
+
+    function login() {
+      const val = document.getElementById("tokenInput").value.trim();
+      if (!val) {
+        showMsg("יש להזין קוד ניהול.", true);
+        return;
+      }
+      token = val;
+      sessionStorage.setItem(STORAGE_KEY, token);
+      loadAdminData();
+    }
+
+    function logout() {
+      token = "";
+      sessionStorage.removeItem(STORAGE_KEY);
+      document.getElementById("adminApp").style.display = "none";
+      document.getElementById("topActions").style.display = "none";
+      document.getElementById("loginCard").style.display = "block";
+      document.getElementById("tokenInput").value = "";
+      clearMsg();
+    }
+
+    function switchTab(tab) {
+      currentTab = tab;
+      document.getElementById("tabOrders").classList.toggle("active", tab === "orders");
+      document.getElementById("tabMenu").classList.toggle("active", tab === "menu");
+      document.getElementById("ordersPanel").style.display = tab === "orders" ? "grid" : "none";
+      document.getElementById("menuPanel").style.display = tab === "menu" ? "block" : "none";
+      document.getElementById("addItemBtn").style.display = tab === "menu" ? "inline-block" : "none";
+    }
+
+    async function loadAdminData() {
+      clearMsg();
+      try {
+        const res = await fetch(`${API_URL}?action=adminData&token=${encodeURIComponent(token)}&_t=${Date.now()}`, { cache: "no-store" });
+        const data = await res.json();
+        if (!data || !data.ok) {
+          throw new Error((data && data.error) || "כניסה נדחתה");
+        }
+        state = data;
+        document.getElementById("loginCard").style.display = "none";
+        document.getElementById("adminApp").style.display = "block";
+        document.getElementById("topActions").style.display = "flex";
+        renderOrders();
+        renderMenuList();
+      } catch (err) {
+        showMsg(`שגיאה: ${err.message}`, true);
+        if (String(err.message).includes("קוד")) {
+          logout();
+        }
+      }
+    }
+
+    function refreshAdmin() {
+      loadAdminData();
+    }
+
+    function normalizePhoneIL(raw) {
+      const digits = String(raw || "").replace(/\D/g, "");
+      if (!digits) return "";
+      if (digits.startsWith("972")) return digits;
+      if (digits.startsWith("0")) return "972" + digits.slice(1);
+      return "972" + digits;
+    }
+
+    function buildWhatsappUrl(order) {
+      const phone = normalizePhoneIL(order.phone);
+      const tpl = state.settings.ready_whatsapp_template || "היי {name}, ההזמנה שלך (#{order_id}) בבינינו מוכנה!";
+      const msg = tpl
+        .replace(/\{name\}/g, order.name || "לקוח/ה")
+        .replace(/\{order_id\}/g, order.orderId || "");
+      return phone ? `https://wa.me/${phone}?text=${encodeURIComponent(msg)}` : "";
+    }
+
+    async function postAdmin(payload) {
+      const res = await fetch(API_URL, {
+        method: "POST",
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify({ ...payload, token })
+      });
+      const data = await res.json();
+      if (!data || !data.ok) {
+        throw new Error((data && data.error) || "הפעולה נכשלה");
+      }
+      return data;
+    }
+
+    async function changeOrderStatus(orderId, status, openWaAfter = false) {
+      try {
+        await postAdmin({ action: "updateOrderStatus", orderId, status });
+        const ord = state.orders.find(o => String(o.orderId) === String(orderId));
+        if (ord) ord.status = status;
+        renderOrders();
+        showMsg(`הזמנה #${orderId} עודכנה ל-"${status}".`);
+
+        if (openWaAfter && ord) {
+          const url = buildWhatsappUrl(ord);
+          if (url) window.open(url, "_blank", "noopener");
+          else showMsg("אין מספר טלפון תקין להזמנה לפתיחת וואטסאפ.", true);
+        }
+      } catch (err) {
+        showMsg(err.message, true);
+      }
+    }
+
+    function renderOrders() {
+      const box = document.getElementById("ordersPanel");
+      const orders = state.orders || [];
+      if (!orders.length) {
+        box.innerHTML = `<div class="order-card" style="text-align:center; color:var(--muted);">אין הזמנות להצגה.</div>`;
+        return;
+      }
+
+      const statuses = ["התקבלה", "בהכנה", "מוכנה", "נמסרה"];
+      box.innerHTML = orders.map(o => `
+        <article class="order-card">
+          <div class="order-head">
+            <div>
+              <span class="order-id">הזמנה #${o.orderId}</span>
+              <span class="order-meta"> · ${o.createdAt} · ${o.name || ""} (${o.phone || ""}) · ${o.tableOrPickup || ""}</span>
+            </div>
+            <span class="badge ${o.status}">${o.status}</span>
+          </div>
+          <div class="order-items">${o.itemsSummary || ""}</div>
+          ${o.note ? `<div class="order-note">הערה: ${o.note}</div>` : ""}
+          <div class="order-foot">
+            <strong>סה"כ: ${o.total} ₪</strong>
+            <div style="display:flex; flex-wrap:wrap; align-items:center; gap:8px;">
+              <select class="status-select" onchange="changeOrderStatus('${o.orderId}', this.value, false)">
+                ${statuses.map(st => `<option value="${st}" ${st === o.status ? "selected" : ""}>${st}</option>`).join("")}
+              </select>
+              <button type="button" class="btn btn-wa" onclick="changeOrderStatus('${o.orderId}', 'מוכנה', true)">
+                מוכנה · וואטסאפ
+              </button>
+            </div>
+          </div>
+        </article>
+      `).join("");
+    }
+
+    async function toggleAvail(itemId, currentAvail) {
+      const nextAvail = currentAvail === "פעיל" ? "אזל" : "פעיל";
+      try {
+        await postAdmin({ action: "toggleItemAvailability", item_id: itemId, availability: nextAvail });
+        const item = state.items.find(i => i.item_id === itemId);
+        if (item) item.availability = nextAvail;
+        renderMenuList();
+        showMsg(`הזמינות של "${item ? item.name : itemId}" עודכנה ל-"${nextAvail}".`);
+      } catch (err) {
+        showMsg(err.message, true);
+      }
+    }
+
+    function openItemModal(itemId = "") {
+      const existing = itemId ? state.items.find(i => i.item_id === itemId) : null;
+      document.getElementById("modalTitle").textContent = existing ? `עריכת פריט: ${existing.name}` : "הוספת פריט חדש";
+      document.getElementById("fItemId").value = existing ? existing.item_id : "";
+      document.getElementById("fItemId").readOnly = Boolean(existing);
+      document.getElementById("fCategory").value = existing ? existing.category : "קפה ומשקאות";
+      document.getElementById("fCatNote").value = existing ? existing.category_note : "";
+      document.getElementById("fName").value = existing ? existing.name : "";
+      document.getElementById("fDesc").value = existing ? existing.desc : "";
+      document.getElementById("fOptions").value = existing ? existing.options_raw : "רגיל:15";
+      document.getElementById("fAvail").value = existing ? existing.availability : "פעיל";
+      document.getElementById("fOrder").value = existing ? existing.order : (state.items.length + 1);
+      document.getElementById("itemBackdrop").classList.add("open");
+    }
+
+    function closeItemModal() {
+      document.getElementById("itemBackdrop").classList.remove("open");
+    }
+
+    document.addEventListener("keydown", e => {
+      if (e.key === "Escape") closeItemModal();
+    });
+
+    async function submitItemForm(e) {
+      e.preventDefault();
+      const itemPayload = {
+        item_id: document.getElementById("fItemId").value.trim(),
+        category: document.getElementById("fCategory").value.trim(),
+        category_note: document.getElementById("fCatNote").value.trim(),
+        name: document.getElementById("fName").value.trim(),
+        desc: document.getElementById("fDesc").value.trim(),
+        options_raw: document.getElementById("fOptions").value.trim(),
+        availability: document.getElementById("fAvail").value,
+        order: Number(document.getElementById("fOrder").value || 1)
+      };
+
+      const btn = document.getElementById("saveItemBtn");
+      btn.disabled = true;
+      btn.textContent = "שומר...";
+      try {
+        await postAdmin({ action: "saveMenuItem", item: itemPayload });
+        closeItemModal();
+        await loadAdminData();
+        showMsg(`הפריט "${itemPayload.name}" נשמר בהצלחה.`);
+      } catch (err) {
+        showMsg(err.message, true);
+      } finally {
+        btn.disabled = false;
+        btn.textContent = "שמור לשיטס";
+      }
+    }
+
+    function renderMenuList() {
+      const box = document.getElementById("menuPanel");
+      const items = state.items || [];
+      if (!items.length) {
+        box.innerHTML = `<div class="menu-admin-row" style="color:var(--muted);">אין פריטים בתפריט.</div>`;
+        return;
+      }
+
+      box.innerHTML = items.map(it => {
+        const isOn = it.availability === "פעיל";
+        return `
+          <div class="menu-admin-row">
+            <div>
+              <strong>${it.name}</strong>
+              <span style="font-size:0.82rem; color:var(--muted);"> · ${it.category} · ${it.options_raw}</span>
+            </div>
+            <div class="row-btns">
+              <span class="avail-pill ${isOn ? "avail-on" : "avail-off"}">${it.availability}</span>
+              <button type="button" class="btn" onclick="openItemModal('${it.item_id.replace(/'/g, "\\'")}')">עריכה</button>
+              <button type="button" class="btn" onclick="toggleAvail('${it.item_id.replace(/'/g, "\\'")}', '${it.availability}')">
+                ${isOn ? "סמן כאזל" : "הפעל"}
+              </button>
+            </div>
+          </div>
+        `;
+      }).join("");
+    }
+
+    if (token) {
+      loadAdminData();
+    }
+  </script>
+</body>
+</html>
