@@ -534,6 +534,24 @@
     let pollTimer = null;
     let audioCtx = null;
 
+    function formatOrderDateTimeIL(raw) {
+      if (!raw) return "";
+      const str = String(raw).trim();
+      const pad = n => String(n).padStart(2, "0");
+
+      const dmyMatch = str.match(/^(\d{2}\/\d{2}\/\d{4})[,\s·-]+(\d{1,2}:\d{2})(?::\d{2})?$/);
+      if (dmyMatch) {
+        const [hh, mm] = dmyMatch[2].split(":");
+        return `${dmyMatch[1]} · ${pad(hh)}:${mm}`;
+      }
+
+      const parsed = new Date(str);
+      if (!isNaN(parsed.getTime())) {
+        return `${pad(parsed.getDate())}/${pad(parsed.getMonth() + 1)}/${parsed.getFullYear()} · ${pad(parsed.getHours())}:${pad(parsed.getMinutes())}`;
+      }
+      return str;
+    }
+
     function syncSoundButton() {
       const btn = document.getElementById("soundBtn");
       if (!btn) return;
@@ -755,13 +773,14 @@
         const isHandling = o.status === "בטיפול";
         const cardClass = isNew ? "order-card is-new" : (isHandling ? "order-card is-handling" : "order-card");
         const statusLabel = isNew ? "התקבלה · חדש" : o.status;
+        const formattedTime = formatOrderDateTimeIL(o.createdAt);
 
         return `
           <article class="${cardClass}" onclick="markInHandling('${o.orderId}', '${o.status}')">
             <div class="order-head">
               <div>
                 <span class="order-id">הזמנה #${o.orderId}</span>
-                <span class="order-meta"> · ${o.createdAt} · ${o.name || ""} (${o.phone || ""})</span>
+                <span class="order-meta"> · ${formattedTime} · ${o.name || ""} (${o.phone || ""})</span>
               </div>
               <span class="badge ${o.status}">${statusLabel}</span>
             </div>
