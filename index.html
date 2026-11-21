@@ -76,8 +76,16 @@
 
     .order-trigger-wrap {
       margin-top: 14px;
+      min-height: 38px;
       display: flex;
       justify-content: center;
+      align-items: center;
+      transition: opacity 0.18s ease;
+    }
+
+    .order-trigger-wrap.hidden-when-scrolled {
+      opacity: 0;
+      pointer-events: none;
     }
 
     .order-trigger-btn {
@@ -112,33 +120,42 @@
       background: var(--surface-alt);
     }
 
-    /* Compact sticky start button when scrolled past header in view mode */
+    /* Subtle start button that appears only after top button leaves viewport */
     .scroll-order-fab {
-      display: none;
       position: fixed;
       bottom: 16px;
       left: 16px;
       z-index: 28;
-      border: 1px solid var(--accent);
-      background: var(--accent);
-      color: #fff;
+      border: 1px solid var(--border);
+      background: rgba(255, 255, 255, 0.96);
+      color: var(--ink);
       font-family: inherit;
-      font-size: 0.84rem;
-      font-weight: 700;
-      padding: 9px 15px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      padding: 8px 15px;
       border-radius: 999px;
-      box-shadow: 0 8px 20px rgba(20, 17, 15, 0.2);
+      box-shadow: 0 6px 18px rgba(20, 17, 15, 0.12);
       cursor: pointer;
+      opacity: 0;
+      transform: translateY(6px);
+      pointer-events: none;
+      transition: opacity 0.18s ease, transform 0.18s ease, background 0.15s ease;
+    }
+
+    .scroll-order-fab:hover:not(:disabled) {
+      background: var(--surface-alt);
     }
 
     .scroll-order-fab.show {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: auto;
     }
 
     body.ordering-mode .scroll-order-fab {
-      display: none;
+      opacity: 0;
+      transform: translateY(6px);
+      pointer-events: none;
     }
 
     .closed-banner {
@@ -251,26 +268,6 @@
         color: var(--ink);
         font-weight: 600;
         background: var(--surface-alt);
-      }
-
-      .side-order-btn {
-        margin-top: 10px;
-        border: 1px solid var(--accent);
-        background: var(--accent);
-        color: #fff;
-        font-family: inherit;
-        font-size: 0.84rem;
-        font-weight: 600;
-        padding: 7px 10px;
-        border-radius: 9px;
-        cursor: pointer;
-        text-align: center;
-      }
-
-      body.ordering-mode .side-order-btn {
-        background: var(--surface);
-        color: var(--ink);
-        border-color: var(--border);
       }
     }
 
@@ -663,7 +660,7 @@
     <div class="brand-en">benenu</div>
     <h1 id="businessTitle">בינינו</h1>
     <p class="subtitle">קפה, מאפים וכריכים · איסוף מהדלפק</p>
-    <div class="order-trigger-wrap">
+    <div class="order-trigger-wrap" id="orderTriggerWrap">
       <button type="button" class="order-trigger-btn" id="orderTriggerBtn" onclick="toggleOrderingMode()">התחל הזמנה</button>
     </div>
     <div class="closed-banner" id="closedBanner">קבלת הזמנות באתר סגורה כרגע — ניתן לצפות בתפריט</div>
@@ -723,17 +720,30 @@
     let sections = [];
     let ordersOpen = true;
     let orderingMode = false;
+    let topTriggerVisible = true;
     let activeId = "";
     const sizeIdx = {};
     const cart = [];
 
-    function updateScrollFab() {
+    function syncTriggerVisibility() {
       const fab = document.getElementById("scrollOrderFab");
-      const shouldShow = !orderingMode && ordersOpen && window.scrollY > 190;
-      fab.classList.toggle("show", shouldShow);
+      const topWrap = document.getElementById("orderTriggerWrap");
+      const showFab = !orderingMode && ordersOpen && !topTriggerVisible;
+      fab.classList.toggle("show", showFab);
+      topWrap.classList.toggle("hidden-when-scrolled", showFab);
     }
 
-    window.addEventListener("scroll", updateScrollFab, { passive: true });
+    function observeTopTrigger() {
+      const target = document.getElementById("orderTriggerWrap");
+      if (!target || !("IntersectionObserver" in window)) return;
+      const obs = new IntersectionObserver(entries => {
+        entries.forEach(entry => {
+          topTriggerVisible = entry.isIntersecting;
+          syncTriggerVisibility();
+        });
+      }, { threshold: 0.05 });
+      obs.observe(target);
+    }
 
     function setOrderingMode(enable) {
       if (enable && !ordersOpen) return;
@@ -741,12 +751,8 @@
       document.body.classList.toggle("ordering-mode", orderingMode);
       const btn = document.getElementById("orderTriggerBtn");
       btn.textContent = orderingMode ? "יציאה מהזמנה" : "התחל הזמנה";
-      const sideBtn = document.getElementById("sideOrderBtn");
-      if (sideBtn) {
-        sideBtn.textContent = orderingMode ? "יציאה מהזמנה" : "התחל הזמנה";
-      }
       if (!orderingMode) closeSheet();
-      updateScrollFab();
+      syncTriggerVisibility();
     }
 
     function toggleOrderingMode() {
@@ -805,7 +811,7 @@
         document.getElementById("orderTriggerBtn").disabled = !ordersOpen;
         document.getElementById("scrollOrderFab").disabled = !ordersOpen;
         if (!ordersOpen) setOrderingMode(false);
-        updateScrollFab();
+        syncTriggerVisibility();
         updateSubmitButtonLabel();
 
         sections = groupItemsToSections(data.items || []);
@@ -826,13 +832,9 @@
     }
 
     function renderNavs() {
-      const linksHtml = sections.map(s => `
+      document.getElementById("sideNav").innerHTML = sections.map(s => `
         <a href="#${s.id}" class="side-link ${s.id === activeId ? "active" : ""}" data-nav="${s.id}">${s.category}</a>
       `).join("");
-      const sideActionHtml = ordersOpen
-        ? `<button type="button" class="side-order-btn" id="sideOrderBtn" onclick="toggleOrderingMode()">${orderingMode ? "יציאה מהזמנה" : "התחל הזמנה"}</button>`
-        : "";
-      document.getElementById("sideNav").innerHTML = linksHtml + sideActionHtml;
 
       document.getElementById("mobileNav").innerHTML = sections.map(s => `
         <a href="#${s.id}" class="mobile-link ${s.id === activeId ? "active" : ""}" data-nav="${s.id}">${s.category}</a>
@@ -1060,6 +1062,7 @@
       }
     }
 
+    observeTopTrigger();
     renderBar();
     loadMenuFromSheet();
   </script>
