@@ -36,15 +36,19 @@
       background: var(--bg);
       color: var(--ink);
       line-height: 1.55;
-      padding-bottom: 96px;
+      padding-bottom: 56px;
       -webkit-font-smoothing: antialiased;
+    }
+
+    body.ordering-mode {
+      padding-bottom: 96px;
     }
 
     /* Header */
     header {
       background: var(--surface);
       border-bottom: 1px solid var(--border);
-      padding: 28px 18px 22px;
+      padding: 26px 18px 20px;
       text-align: center;
     }
 
@@ -70,6 +74,32 @@
       margin-top: 4px;
     }
 
+    .mode-switch-wrap {
+      margin-top: 14px;
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .mode-btn {
+      border: 1px solid var(--border);
+      background: var(--bg);
+      color: var(--ink);
+      font-family: inherit;
+      font-size: 0.86rem;
+      font-weight: 600;
+      padding: 7px 16px;
+      border-radius: 999px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .mode-btn.active {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #fff;
+    }
+
     .closed-banner {
       display: none;
       max-width: 680px;
@@ -84,26 +114,6 @@
     }
 
     .closed-banner.visible {
-      display: block;
-    }
-
-    .order-toast {
-      position: fixed;
-      top: 16px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: var(--accent);
-      color: #fff;
-      padding: 10px 18px;
-      border-radius: 12px;
-      font-size: 0.9rem;
-      font-weight: 600;
-      box-shadow: 0 10px 24px rgba(20, 17, 15, 0.2);
-      z-index: 80;
-      display: none;
-    }
-
-    .order-toast.show {
       display: block;
     }
 
@@ -284,10 +294,14 @@
     }
 
     .sizes {
-      display: flex;
+      display: none;
       flex-wrap: wrap;
       gap: 6px;
       margin-top: 9px;
+    }
+
+    body.ordering-mode .sizes {
+      display: flex;
     }
 
     .size-btn {
@@ -310,6 +324,7 @@
     }
 
     .add-btn {
+      display: none;
       flex-shrink: 0;
       border: 1px solid var(--border);
       background: var(--surface);
@@ -323,15 +338,14 @@
       transition: all 0.15s ease;
     }
 
+    body.ordering-mode .add-btn {
+      display: inline-block;
+    }
+
     .add-btn:hover:not(:disabled) {
       background: var(--accent);
       border-color: var(--accent);
       color: #fff;
-    }
-
-    .add-btn:disabled {
-      opacity: 0.45;
-      cursor: not-allowed;
     }
 
     .status-msg {
@@ -343,6 +357,7 @@
 
     /* Floating Order Bar */
     .order-bar {
+      display: none;
       position: fixed;
       bottom: 14px;
       left: 50%;
@@ -353,13 +368,16 @@
       color: #fff;
       border-radius: 16px;
       padding: 11px 16px;
-      display: flex;
       align-items: center;
       justify-content: space-between;
       gap: 12px;
       box-shadow: 0 12px 28px rgba(20, 17, 15, 0.22);
       z-index: 30;
       cursor: pointer;
+    }
+
+    body.ordering-mode .order-bar {
+      display: flex;
     }
 
     .order-left {
@@ -506,13 +524,6 @@
       display: none;
     }
 
-    .feedback.ok {
-      display: block;
-      background: var(--accent-soft);
-      color: var(--accent);
-      font-weight: 600;
-    }
-
     .feedback.err {
       display: block;
       background: #fdf2ec;
@@ -525,16 +536,76 @@
       color: var(--muted);
       padding: 22px 8px;
     }
+
+    /* Order Confirmation Screen */
+    .done-screen {
+      position: fixed;
+      inset: 0;
+      background: var(--bg);
+      z-index: 70;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .done-screen.open {
+      display: flex;
+    }
+
+    .done-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 32px 24px;
+      max-width: 420px;
+      width: 100%;
+      text-align: center;
+    }
+
+    .done-label {
+      font-size: 0.88rem;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+
+    .done-number {
+      font-size: 2.6rem;
+      font-weight: 700;
+      color: var(--accent);
+      margin: 6px 0 12px;
+    }
+
+    .done-sub {
+      font-size: 0.94rem;
+      color: var(--muted);
+      margin-bottom: 22px;
+    }
+
+    .done-btn {
+      width: 100%;
+      background: var(--ink);
+      color: #fff;
+      border: none;
+      border-radius: 12px;
+      padding: 12px 16px;
+      font-family: inherit;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
   </style>
 </head>
 <body>
-
-  <div class="order-toast" id="orderToast"></div>
 
   <header>
     <div class="brand-en">benenu</div>
     <h1 id="businessTitle">בינינו</h1>
     <p class="subtitle">קפה, מאפים וכריכים · איסוף מהדלפק</p>
+    <div class="mode-switch-wrap" id="modeSwitchWrap">
+      <button type="button" class="mode-btn active" id="viewModeBtn" onclick="setOrderingMode(false)">עיון בתפריט</button>
+      <button type="button" class="mode-btn" id="orderModeBtn" onclick="setOrderingMode(true)">הזמנה</button>
+    </div>
     <div class="closed-banner" id="closedBanner">קבלת הזמנות באתר סגורה כרגע — ניתן לצפות בתפריט</div>
   </header>
 
@@ -575,22 +646,32 @@
     </div>
   </div>
 
+  <div class="done-screen" id="doneScreen">
+    <div class="done-card">
+      <div class="done-label">ההזמנה התקבלה</div>
+      <div class="done-number" id="doneOrderNumber">#—</div>
+      <p class="done-sub">נעדכן אותך בוואטסאפ כשהיא מוכנה על הדלפק.</p>
+      <button type="button" class="done-btn" onclick="backToMenu()">חזרה לתפריט</button>
+    </div>
+  </div>
+
   <script>
     const API_URL = "https://script.google.com/macros/s/AKfycbziLXiN0ZaU-yQTln6anOu2vjsRNEAUKq2Jh6mYk1WwymKne9TikZp2gdW3bOGxT0Lb/exec";
 
     let sections = [];
     let ordersOpen = true;
+    let orderingMode = false;
     let activeId = "";
-    let toastTimer = null;
     const sizeIdx = {};
     const cart = [];
 
-    function showToast(text) {
-      const el = document.getElementById("orderToast");
-      el.textContent = text;
-      el.classList.add("show");
-      clearTimeout(toastTimer);
-      toastTimer = setTimeout(() => el.classList.remove("show"), 4000);
+    function setOrderingMode(enable) {
+      if (enable && !ordersOpen) return;
+      orderingMode = enable;
+      document.body.classList.toggle("ordering-mode", orderingMode);
+      document.getElementById("viewModeBtn").classList.toggle("active", !orderingMode);
+      document.getElementById("orderModeBtn").classList.toggle("active", orderingMode);
+      if (!orderingMode) closeSheet();
     }
 
     function slugifyCategory(cat) {
@@ -642,6 +723,8 @@
         }
         ordersOpen = data.ordersOpen !== false;
         document.getElementById("closedBanner").classList.toggle("visible", !ordersOpen);
+        document.getElementById("orderModeBtn").disabled = !ordersOpen;
+        if (!ordersOpen) setOrderingMode(false);
         updateSubmitButtonLabel();
 
         sections = groupItemsToSections(data.items || []);
@@ -789,6 +872,16 @@
       document.getElementById("sheetBackdrop").classList.remove("open");
     }
 
+    function openDoneScreen(orderId) {
+      document.getElementById("doneOrderNumber").textContent = `#${orderId}`;
+      document.getElementById("doneScreen").classList.add("open");
+    }
+
+    function backToMenu() {
+      document.getElementById("doneScreen").classList.remove("open");
+      setOrderingMode(false);
+    }
+
     document.addEventListener("keydown", e => {
       if (e.key === "Escape") closeSheet();
     });
@@ -873,7 +966,7 @@
         renderBar();
         renderSheet();
         closeSheet();
-        showToast(`הזמנה #${orderNum} נשלחה בהצלחה!`);
+        openDoneScreen(orderNum);
       } catch (err) {
         fb.className = "feedback err";
         fb.textContent = `לא הצלחנו לשלוח את ההזמנה: ${err.message}`;
