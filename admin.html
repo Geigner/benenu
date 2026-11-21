@@ -18,6 +18,8 @@
       --accent-soft: #eef3ef;
       --warm: #a85b32;
       --warm-soft: #fdf2ec;
+      --care: #8a5a18;
+      --care-soft: #fbf4e6;
       --border: #e6dfd5;
       --radius: 14px;
     }
@@ -206,11 +208,34 @@
       gap: 12px;
     }
 
+    @keyframes pulseNewOrder {
+      0%, 100% {
+        box-shadow: 0 0 0 0 rgba(168, 91, 50, 0.28);
+        border-color: var(--warm);
+      }
+      50% {
+        box-shadow: 0 0 0 6px rgba(168, 91, 50, 0);
+        border-color: #d47a49;
+      }
+    }
+
     .order-card {
       background: var(--surface);
       border: 1px solid var(--border);
       border-radius: var(--radius);
       padding: 16px 18px;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .order-card.is-new {
+      border-right: 4px solid var(--warm);
+      cursor: pointer;
+      animation: pulseNewOrder 1.8s ease-in-out infinite;
+    }
+
+    .order-card.is-handling {
+      border-right: 4px solid var(--care);
+      background: #fffdfb;
     }
 
     .order-head {
@@ -243,14 +268,19 @@
       color: var(--ink);
     }
 
+    .badge.התקבלה {
+      background: var(--warm-soft);
+      color: var(--warm);
+    }
+
+    .badge.בטיפול {
+      background: var(--care-soft);
+      color: var(--care);
+    }
+
     .badge.מוכנה {
       background: var(--accent-soft);
       color: var(--accent);
-    }
-
-    .badge.בהכנה {
-      background: var(--warm-soft);
-      color: var(--warm);
     }
 
     .order-items {
@@ -273,15 +303,6 @@
       gap: 10px;
       padding-top: 10px;
       border-top: 1px dashed var(--border);
-    }
-
-    .status-select {
-      padding: 7px 10px;
-      border-radius: 9px;
-      border: 1px solid var(--border);
-      font-family: inherit;
-      font-size: 0.86rem;
-      background: #fff;
     }
 
     .menu-admin-list {
@@ -499,6 +520,7 @@
     let state = { orders: [], items: [], settings: {} };
     let currentTab = "orders";
     let orderFilter = "active";
+    let pollTimer = null;
 
     function showMsg(text, isErr = false) {
       const el = document.getElementById("toast");
@@ -526,6 +548,7 @@
     function logout() {
       token = "";
       sessionStorage.removeItem(STORAGE_KEY);
+      stopPolling();
       document.getElementById("adminApp").style.display = "none";
       document.getElementById("topActions").style.display = "none";
       document.getElementById("loginCard").style.display = "block";
@@ -549,8 +572,24 @@
       renderOrders();
     }
 
-    async function loadAdminData() {
-      clearMsg();
+    function startPolling() {
+      stopPolling();
+      pollTimer = setInterval(() => {
+        if (token && currentTab === "orders") {
+          loadAdminData(true);
+        }
+      }, 20000);
+    }
+
+    function stopPolling() {
+      if (pollTimer) {
+        clearInterval(pollTimer);
+        pollTimer = null;
+      }
+    }
+
+    async function loadAdminData(silent = false) {
+      if (!silent) clearMsg();
       try {
         const res = await fetch(`${API_URL}?action=adminData&token=${encodeURIComponent(token)}&_t=${Date.now()}`, { cache: "no-store" });
         const data = await res.json();
@@ -563,8 +602,9 @@
         document.getElementById("topActions").style.display = "flex";
         renderOrders();
         renderMenuList();
+        startPolling();
       } catch (err) {
-        showMsg(`שגיאה: ${err.message}`, true);
+        if (!silent) showMsg(`שגיאה: ${err.message}`, true);
         if (String(err.message).includes("קוד")) {
           logout();
         }
@@ -572,7 +612,7 @@
     }
 
     function refreshAdmin() {
-      loadAdminData();
+      loadAdminData(false);
     }
 
     function normalizePhoneIL(raw) {
@@ -585,7 +625,7 @@
 
     function buildWhatsappUrl(order) {
       const phone = normalizePhoneIL(order.phone);
-      const tpl = state.settings.ready_whatsapp_template || "היי {name}, ההזמנה שלך (#{order_id}) בבינינו מוכנה!";
+      const tpl = state.settings.ready_whatsapp_template || "היי {name}, ההזמנה שלך (#{order_id}) בבינינו מוכנה על הדלפק!";
       const msg = tpl
         .replace(/\{name\}/g, order.name || "לקוח/ה")
         .replace(/\{order_id\}/g, order.orderId || "");
@@ -603,6 +643,11 @@
         throw new Error((data && data.error) || "הפעולה נכשלה");
       }
       return data;
+    }
+
+    async function markInHandling(orderId, currentStatus) {
+      if (currentStatus !== "התקבלה") return;
+      await changeOrderStatus(orderId, "בטיפול", false);
     }
 
     async function changeOrderStatus(orderId, status, openWaAfter = false) {
@@ -637,36 +682,44 @@
         return;
       }
 
-      const statuses = ["התקבלה", "בהכנה", "מוכנה", "נמסרה"];
-      box.innerHTML = orders.map(o => `
-        <article class="order-card">
-          <div class="order-head">
-            <div>
-              <span class="order-id">הזמנה #${o.orderId}</span>
-              <span class="order-meta"> · ${o.createdAt} · ${o.name || ""} (${o.phone || ""})</span>
+      box.innerHTML = orders.map(o => {
+        const isNew = o.status === "התקבלה";
+        const isHandling = o.status === "בטיפול";
+        const cardClass = isNew ? "order-card is-new" : (isHandling ? "order-card is-handling" : "order-card");
+        const statusLabel = isNew ? "התקבלה · חדש" : o.status;
+
+        return `
+          <article class="${cardClass}" onclick="markInHandling('${o.orderId}', '${o.status}')">
+            <div class="order-head">
+              <div>
+                <span class="order-id">הזמנה #${o.orderId}</span>
+                <span class="order-meta"> · ${o.createdAt} · ${o.name || ""} (${o.phone || ""})</span>
+              </div>
+              <span class="badge ${o.status}">${statusLabel}</span>
             </div>
-            <span class="badge ${o.status}">${o.status}</span>
-          </div>
-          <div class="order-items">${o.itemsSummary || ""}</div>
-          ${o.note ? `<div class="order-note">הערה: ${o.note}</div>` : ""}
-          <div class="order-foot">
-            <strong>סה"כ: ${o.total} ₪</strong>
-            <div style="display:flex; flex-wrap:wrap; align-items:center; gap:8px;">
-              <select class="status-select" onchange="changeOrderStatus('${o.orderId}', this.value, false)">
-                ${statuses.map(st => `<option value="${st}" ${st === o.status ? "selected" : ""}>${st}</option>`).join("")}
-              </select>
-              <button type="button" class="btn btn-wa" onclick="changeOrderStatus('${o.orderId}', 'מוכנה', true)">
-                מוכנה · וואטסאפ
-              </button>
-              ${o.status !== "נמסרה" ? `
-                <button type="button" class="btn" onclick="changeOrderStatus('${o.orderId}', 'נמסרה', false)">
-                  נמסרה
+            <div class="order-items">${o.itemsSummary || ""}</div>
+            ${o.note ? `<div class="order-note">הערה: ${o.note}</div>` : ""}
+            <div class="order-foot" onclick="event.stopPropagation()">
+              <strong>סה"כ: ${o.total} ₪</strong>
+              <div style="display:flex; flex-wrap:wrap; align-items:center; gap:8px;">
+                ${isNew ? `
+                  <button type="button" class="btn" onclick="changeOrderStatus('${o.orderId}', 'בטיפול', false)">
+                    בטיפול
+                  </button>
+                ` : ""}
+                <button type="button" class="btn btn-wa" onclick="changeOrderStatus('${o.orderId}', 'מוכנה', true)">
+                  מוכנה · וואטסאפ
                 </button>
-              ` : ""}
+                ${o.status !== "נמסרה" ? `
+                  <button type="button" class="btn" onclick="changeOrderStatus('${o.orderId}', 'נמסרה', false)">
+                    נמסרה
+                  </button>
+                ` : ""}
+              </div>
             </div>
-          </div>
-        </article>
-      `).join("");
+          </article>
+        `;
+      }).join("");
     }
 
     async function toggleAvail(itemId, currentAvail) {
@@ -724,7 +777,7 @@
       try {
         await postAdmin({ action: "saveMenuItem", item: itemPayload });
         closeItemModal();
-        await loadAdminData();
+        await loadAdminData(false);
         showMsg(`הפריט "${itemPayload.name}" נשמר בהצלחה.`);
       } catch (err) {
         showMsg(err.message, true);
@@ -763,7 +816,7 @@
     }
 
     if (token) {
-      loadAdminData();
+      loadAdminData(false);
     }
   </script>
 </body>
