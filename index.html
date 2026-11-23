@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>בינינו · benenu — תפריט</title>
+  <title>benenu · café — תפריט</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@400;500;700;900&family=Heebo:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
@@ -58,29 +58,28 @@
       margin: 0 auto;
     }
 
-    .brand-en {
-      font-size: 0.78rem;
-      letter-spacing: 0.32em;
-      text-transform: uppercase;
-      color: var(--muted);
-      font-weight: 600;
-    }
-
     h1 {
       font-family: 'Frank Ruhl Libre', serif;
       font-size: clamp(2.35rem, 6.2vw, 3.25rem);
       font-weight: 900;
-      letter-spacing: -0.015em;
+      letter-spacing: -0.01em;
       color: var(--ink);
       line-height: 1.1;
-      margin-top: 6px;
+    }
+
+    .brand-cafe {
+      font-family: 'Heebo', sans-serif;
+      font-weight: 400;
+      font-style: italic;
+      color: var(--muted);
+      letter-spacing: 0.04em;
     }
 
     .subtitle {
       color: var(--muted);
       font-size: 0.98rem;
       font-weight: 300;
-      margin-top: 8px;
+      margin-top: 10px;
       letter-spacing: 0.02em;
     }
 
@@ -757,8 +756,7 @@
 
   <header>
     <div class="header-inner">
-      <div class="brand-en">benenu</div>
-      <h1 id="businessTitle">בינינו</h1>
+      <h1 id="businessTitle">benenu <span class="brand-cafe">· café</span></h1>
       <p class="subtitle">קפה, מאפים וכריכים · איסוף מהדלפק</p>
       <div class="order-trigger-wrap" id="orderTriggerWrap">
         <button type="button" class="order-trigger-btn" id="orderTriggerBtn" onclick="toggleOrderingMode()">התחל הזמנה</button>
@@ -929,9 +927,6 @@
           throw new Error((data && data.error) || "שגיאה בטעינת התפריט");
         }
 
-        if (data.businessName) {
-          document.getElementById("businessTitle").textContent = data.businessName;
-        }
         ordersOpen = data.ordersOpen !== false;
         hasDailyCode = Boolean(data.hasDailyCode);
         document.getElementById("dailyCodeWrap").classList.toggle("visible", hasDailyCode);
