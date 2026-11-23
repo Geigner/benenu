@@ -227,7 +227,7 @@
     .layout {
       max-width: 1000px;
       margin: 0 auto;
-      padding: 38px 18px;
+      padding: 38px 18px 18px;
       display: grid;
       grid-template-columns: 1fr;
       gap: 34px;
@@ -430,11 +430,56 @@
       font-size: 0.95rem;
     }
 
+    /* Bottom Place Info Card */
+    .place-card {
+      max-width: 1000px;
+      margin: 12px auto 0;
+      padding: 0 18px;
+    }
+
+    .place-box {
+      background: var(--paper);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 22px 24px;
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 14px;
+    }
+
+    @media (min-width: 720px) {
+      .place-box {
+        grid-template-columns: 1fr 1fr;
+        gap: 20px 32px;
+      }
+    }
+
+    .place-item-label {
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--muted);
+      margin-bottom: 3px;
+    }
+
+    .place-item-val {
+      font-size: 0.94rem;
+      color: var(--ink);
+    }
+
+    .place-note {
+      grid-column: 1 / -1;
+      padding-top: 12px;
+      border-top: 1px solid var(--border);
+      font-size: 0.9rem;
+      color: var(--muted);
+      font-weight: 300;
+    }
+
     /* Footer Mark */
     .menu-colophon {
       max-width: 1000px;
-      margin: 6px auto 0;
-      padding: 18px;
+      margin: 8px auto 0;
+      padding: 16px 18px;
       text-align: center;
       color: var(--muted);
       font-size: 0.8rem;
@@ -710,6 +755,22 @@
     <aside class="side-nav" id="sideNav" aria-label="קטגוריות תפריט"></aside>
     <main id="menuRoot"><p class="status-msg">טוען תפריט...</p></main>
   </div>
+
+  <section class="place-card" aria-label="פרטי המקום">
+    <div class="place-box">
+      <div>
+        <div class="place-item-label">כתובת</div>
+        <div class="place-item-val">אלכסנדר זייד 1, קרית טבעון</div>
+      </div>
+      <div>
+        <div class="place-item-label">שעות פתיחה</div>
+        <div class="place-item-val">ראשון–שישי 8:00–14:00</div>
+      </div>
+      <div class="place-note">
+        קפה ספשלטי שקולים במקום, כריכים, עוגות ומאפים בבקתת עץ בגן בחצר המנדו בר.
+      </div>
+    </div>
+  </section>
 
   <footer class="menu-colophon">benenu · בינינו</footer>
 
