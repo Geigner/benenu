@@ -6,19 +6,20 @@
   <title>בינינו · benenu — תפריט</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@400;500;700;900&family=Heebo:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
   <style>
     :root {
-      --bg: #faf8f5;
-      --surface: #ffffff;
-      --surface-alt: #f3efe9;
-      --ink: #221e1b;
-      --muted: #6f675f;
-      --accent: #395241;
-      --accent-soft: #eef3ef;
-      --warm: #a85b32;
-      --border: #e6dfd5;
-      --radius: 14px;
+      --bg: #f4efe6;
+      --paper: #fdfbf8;
+      --paper-alt: #efe7da;
+      --ink: #201b18;
+      --muted: #6c6259;
+      --accent: #2f4838;
+      --accent-soft: #e7efe9;
+      --terracotta: #9d4b2b;
+      --border: #e3d9c8;
+      --border-strong: #cfc1aa;
+      --radius: 20px;
     }
 
     * {
@@ -33,50 +34,59 @@
 
     body {
       font-family: 'Heebo', sans-serif;
-      background: var(--bg);
+      background-color: var(--bg);
       color: var(--ink);
-      line-height: 1.55;
-      padding-bottom: 56px;
+      line-height: 1.6;
+      padding-bottom: 72px;
       -webkit-font-smoothing: antialiased;
     }
 
     body.ordering-mode {
-      padding-bottom: 96px;
+      padding-bottom: 104px;
     }
 
-    /* Header */
+    /* Clean Grandiose Header */
     header {
-      background: var(--surface);
+      background: var(--paper);
       border-bottom: 1px solid var(--border);
-      padding: 26px 18px 20px;
+      padding: 40px 20px 32px;
       text-align: center;
     }
 
+    .header-inner {
+      max-width: 660px;
+      margin: 0 auto;
+    }
+
     .brand-en {
-      font-size: 0.76rem;
-      letter-spacing: 0.18em;
+      font-size: 0.78rem;
+      letter-spacing: 0.32em;
       text-transform: uppercase;
       color: var(--muted);
-      font-weight: 500;
-      margin-bottom: 4px;
+      font-weight: 600;
     }
 
     h1 {
-      font-size: 2rem;
-      font-weight: 700;
-      letter-spacing: -0.02em;
+      font-family: 'Frank Ruhl Libre', serif;
+      font-size: clamp(2.35rem, 6.2vw, 3.25rem);
+      font-weight: 900;
+      letter-spacing: -0.015em;
       color: var(--ink);
+      line-height: 1.1;
+      margin-top: 6px;
     }
 
     .subtitle {
       color: var(--muted);
-      font-size: 0.92rem;
-      margin-top: 4px;
+      font-size: 0.98rem;
+      font-weight: 300;
+      margin-top: 8px;
+      letter-spacing: 0.02em;
     }
 
     .order-trigger-wrap {
-      margin-top: 14px;
-      min-height: 38px;
+      margin-top: 22px;
+      min-height: 42px;
       display: flex;
       justify-content: center;
       align-items: center;
@@ -93,16 +103,19 @@
       background: var(--accent);
       color: #fff;
       font-family: inherit;
-      font-size: 0.88rem;
+      font-size: 0.9rem;
       font-weight: 600;
-      padding: 8px 18px;
+      padding: 10px 26px;
       border-radius: 999px;
       cursor: pointer;
-      transition: all 0.15s ease;
+      letter-spacing: 0.02em;
+      box-shadow: 0 6px 18px rgba(47, 72, 56, 0.18);
+      transition: all 0.18s ease;
     }
 
     .order-trigger-btn:hover:not(:disabled) {
-      background: #2d4234;
+      background: #223629;
+      transform: translateY(-1px);
     }
 
     .order-trigger-btn:disabled {
@@ -111,30 +124,28 @@
     }
 
     body.ordering-mode .order-trigger-btn {
-      background: var(--surface);
+      background: var(--paper);
       color: var(--ink);
-      border-color: var(--border);
+      border-color: var(--border-strong);
+      box-shadow: none;
     }
 
-    body.ordering-mode .order-trigger-btn:hover:not(:disabled) {
-      background: var(--surface-alt);
-    }
-
-    /* Subtle start button that appears only after top button leaves viewport */
+    /* Floating subtle trigger when scrolled */
     .scroll-order-fab {
       position: fixed;
-      bottom: 16px;
-      left: 16px;
+      bottom: 18px;
+      left: 18px;
       z-index: 28;
-      border: 1px solid var(--border);
-      background: rgba(255, 255, 255, 0.96);
+      border: 1px solid var(--border-strong);
+      background: rgba(253, 251, 248, 0.96);
+      backdrop-filter: blur(6px);
       color: var(--ink);
       font-family: inherit;
-      font-size: 0.82rem;
+      font-size: 0.84rem;
       font-weight: 600;
-      padding: 8px 15px;
+      padding: 9px 16px;
       border-radius: 999px;
-      box-shadow: 0 6px 18px rgba(20, 17, 15, 0.12);
+      box-shadow: 0 8px 22px rgba(32, 27, 24, 0.12);
       cursor: pointer;
       opacity: 0;
       transform: translateY(6px);
@@ -143,7 +154,7 @@
     }
 
     .scroll-order-fab:hover:not(:disabled) {
-      background: var(--surface-alt);
+      background: var(--paper-alt);
     }
 
     .scroll-order-fab.show {
@@ -160,14 +171,14 @@
 
     .closed-banner {
       display: none;
-      max-width: 680px;
+      max-width: 560px;
       margin: 14px auto 0;
-      background: #fdf2ec;
-      color: var(--warm);
-      border: 1px solid #f0d2c2;
+      background: #faeee7;
+      color: var(--terracotta);
+      border: 1px solid #e7cab9;
       border-radius: 10px;
       padding: 9px 14px;
-      font-size: 0.88rem;
+      font-size: 0.86rem;
       font-weight: 600;
     }
 
@@ -180,10 +191,10 @@
       position: sticky;
       top: 0;
       z-index: 20;
-      background: rgba(250, 248, 245, 0.95);
+      background: rgba(244, 239, 230, 0.95);
       backdrop-filter: blur(8px);
       border-bottom: 1px solid var(--border);
-      padding: 8px 14px;
+      padding: 9px 14px;
       display: flex;
       gap: 6px;
       overflow-x: auto;
@@ -197,34 +208,36 @@
     .mobile-link {
       flex: 0 0 auto;
       text-decoration: none;
-      font-size: 0.82rem;
+      font-size: 0.83rem;
       color: var(--muted);
-      padding: 5px 11px;
-      border-radius: 8px;
+      padding: 5px 12px;
+      border-radius: 999px;
       font-weight: 500;
+      border: 1px solid transparent;
     }
 
     .mobile-link.active {
       color: var(--ink);
-      background: var(--surface-alt);
+      background: var(--paper);
+      border-color: var(--border);
       font-weight: 600;
     }
 
     /* Main Layout */
     .layout {
-      max-width: 980px;
+      max-width: 1000px;
       margin: 0 auto;
-      padding: 28px 16px;
+      padding: 38px 18px 18px;
       display: grid;
       grid-template-columns: 1fr;
-      gap: 32px;
+      gap: 34px;
     }
 
     @media (min-width: 820px) {
       .layout {
-        grid-template-columns: 176px 1fr;
+        grid-template-columns: 188px 1fr;
         align-items: start;
-        gap: 36px;
+        gap: 46px;
       }
 
       .mobile-strip {
@@ -232,7 +245,7 @@
       }
     }
 
-    /* Subtle Side Navigation */
+    /* Side Navigation */
     .side-nav {
       display: none;
     }
@@ -241,40 +254,40 @@
       .side-nav {
         display: flex;
         flex-direction: column;
-        gap: 2px;
+        gap: 4px;
         position: sticky;
-        top: 28px;
-        padding-top: 4px;
-        border-left: 1px solid var(--border);
-        padding-left: 12px;
+        top: 32px;
+        padding: 10px;
+        background: var(--paper);
+        border: 1px solid var(--border);
+        border-radius: 16px;
       }
 
       .side-link {
         text-decoration: none;
         color: var(--muted);
-        font-size: 0.88rem;
-        font-weight: 400;
-        padding: 6px 8px;
-        border-radius: 7px;
-        transition: color 0.15s ease, background 0.15s ease;
+        font-size: 0.9rem;
+        padding: 8px 12px;
+        border-radius: 10px;
+        transition: all 0.16s ease;
       }
 
       .side-link:hover {
         color: var(--ink);
-        background: var(--surface-alt);
+        background: var(--paper-alt);
       }
 
       .side-link.active {
         color: var(--ink);
         font-weight: 600;
-        background: var(--surface-alt);
+        background: var(--bg);
       }
     }
 
     /* Menu Sections */
     .section-block {
-      scroll-margin-top: 56px;
-      margin-bottom: 38px;
+      scroll-margin-top: 60px;
+      margin-bottom: 52px;
     }
 
     .section-head {
@@ -283,36 +296,38 @@
       justify-content: space-between;
       gap: 12px;
       padding-bottom: 10px;
-      margin-bottom: 4px;
+      margin-bottom: 14px;
       border-bottom: 1px solid var(--border);
     }
 
     .section-title {
-      font-size: 1.28rem;
+      font-family: 'Frank Ruhl Libre', serif;
+      font-size: 1.7rem;
       font-weight: 700;
       color: var(--ink);
+      letter-spacing: -0.01em;
     }
 
     .section-sub {
-      font-size: 0.82rem;
+      font-size: 0.84rem;
       color: var(--muted);
     }
 
-    /* Clean List */
+    /* Clean Menu Sheet */
     .menu-list {
-      background: var(--surface);
+      background: var(--paper);
       border: 1px solid var(--border);
       border-radius: var(--radius);
-      margin-top: 10px;
-      overflow: hidden;
+      padding: 8px 24px;
+      box-shadow: 0 10px 28px rgba(32, 27, 24, 0.04);
     }
 
     .menu-row {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      gap: 16px;
-      padding: 15px 18px;
+      gap: 18px;
+      padding: 18px 0;
       border-bottom: 1px solid var(--border);
     }
 
@@ -329,33 +344,35 @@
       display: flex;
       align-items: baseline;
       justify-content: space-between;
-      gap: 12px;
+      gap: 14px;
     }
 
     .item-title {
-      font-size: 1.03rem;
-      font-weight: 600;
+      font-family: 'Frank Ruhl Libre', serif;
+      font-size: 1.2rem;
+      font-weight: 700;
       color: var(--ink);
     }
 
     .item-price {
       font-size: 0.98rem;
-      font-weight: 600;
-      color: var(--warm);
+      font-weight: 700;
+      color: var(--terracotta);
       white-space: nowrap;
     }
 
     .item-desc {
-      font-size: 0.88rem;
+      font-size: 0.9rem;
       color: var(--muted);
-      margin-top: 3px;
+      margin-top: 4px;
+      font-weight: 300;
     }
 
     .sizes {
       display: none;
       flex-wrap: wrap;
       gap: 6px;
-      margin-top: 9px;
+      margin-top: 10px;
     }
 
     body.ordering-mode .sizes {
@@ -368,7 +385,7 @@
       color: var(--muted);
       font-family: inherit;
       font-size: 0.78rem;
-      padding: 3px 10px;
+      padding: 4px 11px;
       border-radius: 999px;
       cursor: pointer;
       transition: all 0.14s ease;
@@ -384,14 +401,14 @@
     .add-btn {
       display: none;
       flex-shrink: 0;
-      border: 1px solid var(--border);
-      background: var(--surface);
+      border: 1px solid var(--border-strong);
+      background: var(--paper);
       color: var(--ink);
       font-family: inherit;
-      font-size: 0.84rem;
+      font-size: 0.83rem;
       font-weight: 600;
-      padding: 8px 14px;
-      border-radius: 10px;
+      padding: 8px 15px;
+      border-radius: 999px;
       cursor: pointer;
       transition: all 0.15s ease;
     }
@@ -409,8 +426,64 @@
     .status-msg {
       text-align: center;
       color: var(--muted);
-      padding: 32px 12px;
+      padding: 36px 12px;
       font-size: 0.95rem;
+    }
+
+    /* Bottom Place Info Card */
+    .place-card {
+      max-width: 1000px;
+      margin: 12px auto 0;
+      padding: 0 18px;
+    }
+
+    .place-box {
+      background: var(--paper);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 22px 24px;
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 14px;
+    }
+
+    @media (min-width: 720px) {
+      .place-box {
+        grid-template-columns: 1fr 1fr;
+        gap: 20px 32px;
+      }
+    }
+
+    .place-item-label {
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--muted);
+      margin-bottom: 3px;
+    }
+
+    .place-item-val {
+      font-size: 0.94rem;
+      color: var(--ink);
+    }
+
+    .place-note {
+      grid-column: 1 / -1;
+      padding-top: 12px;
+      border-top: 1px solid var(--border);
+      font-size: 0.9rem;
+      color: var(--muted);
+      font-weight: 300;
+    }
+
+    /* Footer Mark */
+    .menu-colophon {
+      max-width: 1000px;
+      margin: 8px auto 0;
+      padding: 16px 18px;
+      text-align: center;
+      color: var(--muted);
+      font-size: 0.8rem;
+      letter-spacing: 0.12em;
     }
 
     /* Floating Order Bar */
@@ -429,7 +502,7 @@
       align-items: center;
       justify-content: space-between;
       gap: 12px;
-      box-shadow: 0 12px 28px rgba(20, 17, 15, 0.22);
+      box-shadow: 0 12px 28px rgba(20, 17, 15, 0.24);
       z-index: 30;
       cursor: pointer;
     }
@@ -447,7 +520,7 @@
     }
 
     .order-count {
-      background: var(--warm);
+      background: var(--terracotta);
       color: #fff;
       font-size: 0.78rem;
       font-weight: 700;
@@ -471,7 +544,7 @@
     .backdrop {
       position: fixed;
       inset: 0;
-      background: rgba(20, 17, 15, 0.42);
+      background: rgba(20, 17, 15, 0.45);
       display: none;
       align-items: flex-end;
       justify-content: center;
@@ -483,7 +556,7 @@
     }
 
     .sheet {
-      background: var(--surface);
+      background: var(--paper);
       width: 100%;
       max-width: 560px;
       max-height: 88vh;
@@ -499,9 +572,14 @@
       margin-bottom: 14px;
     }
 
+    .sheet-head h2 {
+      font-family: 'Frank Ruhl Libre', serif;
+      font-size: 1.4rem;
+    }
+
     .close-btn {
       border: none;
-      background: var(--surface-alt);
+      background: var(--paper-alt);
       width: 32px;
       height: 32px;
       border-radius: 50%;
@@ -555,6 +633,26 @@
       border-color: var(--accent);
     }
 
+    .daily-code-wrap {
+      display: none;
+      background: var(--accent-soft);
+      border: 1px solid rgba(47, 72, 56, 0.25);
+      border-radius: 12px;
+      padding: 10px 12px;
+    }
+
+    .daily-code-wrap.visible {
+      display: block;
+    }
+
+    .daily-code-label {
+      display: block;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--accent);
+      margin-bottom: 6px;
+    }
+
     .confirm-btn {
       margin-top: 14px;
       width: 100%;
@@ -584,8 +682,8 @@
 
     .feedback.err {
       display: block;
-      background: #fdf2ec;
-      color: var(--warm);
+      background: #faeee7;
+      color: var(--terracotta);
       font-weight: 600;
     }
 
@@ -612,10 +710,10 @@
     }
 
     .done-card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 20px;
-      padding: 32px 24px;
+      background: var(--paper);
+      border: 1px solid var(--border-strong);
+      border-radius: 22px;
+      padding: 34px 24px;
       max-width: 420px;
       width: 100%;
       text-align: center;
@@ -628,7 +726,8 @@
     }
 
     .done-number {
-      font-size: 2.6rem;
+      font-family: 'Frank Ruhl Libre', serif;
+      font-size: 2.8rem;
       font-weight: 700;
       color: var(--accent);
       margin: 6px 0 12px;
@@ -657,13 +756,15 @@
 <body>
 
   <header>
-    <div class="brand-en">benenu</div>
-    <h1 id="businessTitle">בינינו</h1>
-    <p class="subtitle">קפה, מאפים וכריכים · איסוף מהדלפק</p>
-    <div class="order-trigger-wrap" id="orderTriggerWrap">
-      <button type="button" class="order-trigger-btn" id="orderTriggerBtn" onclick="toggleOrderingMode()">התחל הזמנה</button>
+    <div class="header-inner">
+      <div class="brand-en">benenu</div>
+      <h1 id="businessTitle">בינינו</h1>
+      <p class="subtitle">קפה, מאפים וכריכים · איסוף מהדלפק</p>
+      <div class="order-trigger-wrap" id="orderTriggerWrap">
+        <button type="button" class="order-trigger-btn" id="orderTriggerBtn" onclick="toggleOrderingMode()">התחל הזמנה</button>
+      </div>
+      <div class="closed-banner" id="closedBanner">קבלת הזמנות באתר סגורה כרגע — ניתן לצפות בתפריט</div>
     </div>
-    <div class="closed-banner" id="closedBanner">קבלת הזמנות באתר סגורה כרגע — ניתן לצפות בתפריט</div>
   </header>
 
   <button type="button" class="scroll-order-fab" id="scrollOrderFab" onclick="toggleOrderingMode()">התחל הזמנה</button>
@@ -674,6 +775,24 @@
     <aside class="side-nav" id="sideNav" aria-label="קטגוריות תפריט"></aside>
     <main id="menuRoot"><p class="status-msg">טוען תפריט...</p></main>
   </div>
+
+  <section class="place-card" aria-label="פרטי המקום">
+    <div class="place-box">
+      <div>
+        <div class="place-item-label">כתובת</div>
+        <div class="place-item-val">אלכסנדר זייד 1, קרית טבעון</div>
+      </div>
+      <div>
+        <div class="place-item-label">שעות פתיחה</div>
+        <div class="place-item-val">ראשון–שישי 8:00–14:00</div>
+      </div>
+      <div class="place-note">
+        קפה ספשלטי שקולים במקום, כריכים, עוגות ומאפים בבקתת עץ בגן בחצר המנדו בר.
+      </div>
+    </div>
+  </section>
+
+  <footer class="menu-colophon">benenu · בינינו</footer>
 
   <div class="order-bar" onclick="openSheet()">
     <div class="order-left">
@@ -694,6 +813,10 @@
       </div>
       <div id="sheetItems"></div>
       <div class="inputs">
+        <div class="daily-code-wrap" id="dailyCodeWrap">
+          <label class="daily-code-label" for="dailyCodeInput">מילת היום (אם רשומה בדלפק)</label>
+          <input type="text" class="input" id="dailyCodeInput" placeholder="הזן את מילת היום" autocomplete="off" />
+        </div>
         <input type="text" class="input" id="nameInput" placeholder="שם *" required />
         <input type="tel" class="input" id="phoneInput" placeholder="טלפון לעדכון כשהזמנה מוכנה *" required />
         <input type="text" class="input" id="noteInput" placeholder="הערות (למשל נטול קפאין, בלי קרח)" />
@@ -716,9 +839,12 @@
 
   <script>
     const API_URL = "https://script.google.com/macros/s/AKfycbziLXiN0ZaU-yQTln6anOu2vjsRNEAUKq2Jh6mYk1WwymKne9TikZp2gdW3bOGxT0Lb/exec";
+    const SESSION_TTL_MS = 45 * 60 * 1000;
+    const loadedAt = Date.now();
 
     let sections = [];
     let ordersOpen = true;
+    let hasDailyCode = false;
     let orderingMode = false;
     let topTriggerVisible = true;
     let activeId = "";
@@ -807,6 +933,9 @@
           document.getElementById("businessTitle").textContent = data.businessName;
         }
         ordersOpen = data.ordersOpen !== false;
+        hasDailyCode = Boolean(data.hasDailyCode);
+        document.getElementById("dailyCodeWrap").classList.toggle("visible", hasDailyCode);
+
         document.getElementById("closedBanner").classList.toggle("visible", !ordersOpen);
         document.getElementById("orderTriggerBtn").disabled = !ordersOpen;
         document.getElementById("scrollOrderFab").disabled = !ordersOpen;
@@ -998,6 +1127,12 @@
       const fb = document.getElementById("orderFeedback");
       fb.className = "feedback";
 
+      if (Date.now() - loadedAt > SESSION_TTL_MS) {
+        fb.className = "feedback err";
+        fb.textContent = "העמוד פתוח זמן רב — אנא רענן את הדף לפני שליחת ההזמנה.";
+        return;
+      }
+
       if (!ordersOpen) {
         fb.className = "feedback err";
         fb.textContent = "קבלת הזמנות סגורה כרגע.";
@@ -1012,6 +1147,13 @@
       const name = document.getElementById("nameInput").value.trim();
       const phone = document.getElementById("phoneInput").value.trim();
       const note = document.getElementById("noteInput").value.trim();
+      const dailyCode = document.getElementById("dailyCodeInput").value.trim();
+
+      if (hasDailyCode && !dailyCode) {
+        fb.className = "feedback err";
+        fb.textContent = "יש להזין את מילת היום שמופיעה בדלפק.";
+        return;
+      }
 
       if (!name || !phone) {
         fb.className = "feedback err";
@@ -1039,7 +1181,8 @@
             tableOrPickup: "דלפק",
             itemsSummary,
             note,
-            total
+            total,
+            dailyCode
           })
         });
         const data = await res.json();
@@ -1050,6 +1193,7 @@
         const orderNum = data.orderId;
         cart.length = 0;
         document.getElementById("noteInput").value = "";
+        document.getElementById("dailyCodeInput").value = "";
         renderBar();
         renderSheet();
         closeSheet();
