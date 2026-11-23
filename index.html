@@ -780,19 +780,19 @@
     <div class="place-box">
       <div>
         <div class="place-item-label">כתובת</div>
-        <div class="place-item-val">אלכסנדר זייד 1, קרית טבעון</div>
+        <div class="place-item-val">אלכסנדר זייד 1, קרית טבעון[cite: 6]</div>
       </div>
       <div>
         <div class="place-item-label">שעות פתיחה</div>
-        <div class="place-item-val">ראשון–שישי 8:00–14:00</div>
+        <div class="place-item-val">ראשון–שישי 8:00–14:00[cite: 6]</div>
       </div>
       <div class="place-note">
-        קפה ספשלטי שקולים במקום, כריכים, עוגות ומאפים בבקתת עץ בגן בחצר המנדו בר.
+        קפה ספשלטי שקולים במקום, כריכים, עוגות ומאפים בבקתת עץ בגן בחצר המנדו בר[cite: 6].
       </div>
     </div>
   </section>
 
-  <footer class="menu-colophon">benenu · בינינו</footer>
+  <footer class="menu-colophon">benenu · בינינו[cite: 5, 6]</footer>
 
   <div class="order-bar" onclick="openSheet()">
     <div class="order-left">
@@ -814,8 +814,8 @@
       <div id="sheetItems"></div>
       <div class="inputs">
         <div class="daily-code-wrap" id="dailyCodeWrap">
-          <label class="daily-code-label" for="dailyCodeInput">קוד הזמנה יומי (מופיע על הדלפק) *</label>
-          <input type="text" class="input" id="dailyCodeInput" placeholder="הזן את הקוד היומי" autocomplete="off" />
+          <label class="daily-code-label" for="dailyCodeInput">מילת היום (אם רשומה בדלפק)</label>
+          <input type="text" class="input" id="dailyCodeInput" placeholder="הזן את מילת היום" autocomplete="off" />
         </div>
         <input type="text" class="input" id="nameInput" placeholder="שם *" required />
         <input type="tel" class="input" id="phoneInput" placeholder="טלפון לעדכון כשהזמנה מוכנה *" required />
@@ -1151,7 +1151,7 @@
 
       if (hasDailyCode && !dailyCode) {
         fb.className = "feedback err";
-        fb.textContent = "יש להזין את הקוד היומי שעל הדלפק.";
+        fb.textContent = "יש להזין את מילת היום שמופיעה בדלפק.";
         return;
       }
 
