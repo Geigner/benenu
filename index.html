@@ -6,19 +6,20 @@
   <title>בינינו · benenu — תפריט</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@400;500;700&family=Heebo:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
   <style>
     :root {
-      --bg: #faf8f5;
-      --surface: #ffffff;
-      --surface-alt: #f3efe9;
-      --ink: #221e1b;
-      --muted: #6f675f;
-      --accent: #395241;
-      --accent-soft: #eef3ef;
-      --warm: #a85b32;
-      --border: #e6dfd5;
-      --radius: 14px;
+      --bg: #f6f1e9;
+      --paper: #fcfaf6;
+      --paper-alt: #efe8dc;
+      --ink: #241f1c;
+      --muted: #70665d;
+      --accent: #364e3e;
+      --accent-soft: #eaf0eb;
+      --terracotta: #9e5430;
+      --border: #dfd6c7;
+      --border-strong: #cbbda7;
+      --radius: 18px;
     }
 
     * {
@@ -33,50 +34,92 @@
 
     body {
       font-family: 'Heebo', sans-serif;
-      background: var(--bg);
+      background-color: var(--bg);
+      background-image:
+        radial-gradient(rgba(36, 31, 28, 0.03) 1px, transparent 0),
+        radial-gradient(rgba(158, 84, 48, 0.025) 1px, transparent 0);
+      background-size: 26px 26px;
+      background-position: 0 0, 13px 13px;
       color: var(--ink);
-      line-height: 1.55;
-      padding-bottom: 56px;
+      line-height: 1.6;
+      padding-bottom: 68px;
       -webkit-font-smoothing: antialiased;
     }
 
     body.ordering-mode {
-      padding-bottom: 96px;
+      padding-bottom: 102px;
     }
 
-    /* Header */
+    /* Editorial Art Header */
     header {
-      background: var(--surface);
+      position: relative;
+      background: var(--paper);
       border-bottom: 1px solid var(--border);
-      padding: 26px 18px 20px;
+      padding: 34px 20px 28px;
       text-align: center;
+      overflow: hidden;
+    }
+
+    header::after {
+      content: "";
+      position: absolute;
+      inset: 8px;
+      border: 1px solid rgba(203, 189, 167, 0.45);
+      border-radius: 12px;
+      pointer-events: none;
+    }
+
+    .header-inner {
+      position: relative;
+      z-index: 1;
+      max-width: 620px;
+      margin: 0 auto;
+    }
+
+    .art-motif {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      color: var(--terracotta);
+      margin-bottom: 8px;
+    }
+
+    .motif-line {
+      width: 34px;
+      height: 1px;
+      background: var(--border-strong);
     }
 
     .brand-en {
       font-size: 0.76rem;
-      letter-spacing: 0.18em;
+      letter-spacing: 0.26em;
       text-transform: uppercase;
       color: var(--muted);
       font-weight: 500;
-      margin-bottom: 4px;
     }
 
     h1 {
-      font-size: 2rem;
+      font-family: 'Frank Ruhl Libre', serif;
+      font-size: 2.55rem;
       font-weight: 700;
-      letter-spacing: -0.02em;
+      letter-spacing: -0.01em;
       color: var(--ink);
+      line-height: 1.15;
+      margin-top: 2px;
     }
 
     .subtitle {
       color: var(--muted);
-      font-size: 0.92rem;
-      margin-top: 4px;
+      font-size: 0.94rem;
+      font-weight: 300;
+      margin-top: 6px;
+      letter-spacing: 0.02em;
     }
 
     .order-trigger-wrap {
-      margin-top: 14px;
-      min-height: 38px;
+      margin-top: 18px;
+      min-height: 40px;
       display: flex;
       justify-content: center;
       align-items: center;
@@ -95,14 +138,17 @@
       font-family: inherit;
       font-size: 0.88rem;
       font-weight: 600;
-      padding: 8px 18px;
+      padding: 9px 22px;
       border-radius: 999px;
       cursor: pointer;
-      transition: all 0.15s ease;
+      letter-spacing: 0.02em;
+      box-shadow: 0 4px 14px rgba(54, 78, 62, 0.18);
+      transition: all 0.18s ease;
     }
 
     .order-trigger-btn:hover:not(:disabled) {
-      background: #2d4234;
+      background: #293d30;
+      transform: translateY(-1px);
     }
 
     .order-trigger-btn:disabled {
@@ -111,30 +157,28 @@
     }
 
     body.ordering-mode .order-trigger-btn {
-      background: var(--surface);
+      background: var(--paper);
       color: var(--ink);
-      border-color: var(--border);
+      border-color: var(--border-strong);
+      box-shadow: none;
     }
 
-    body.ordering-mode .order-trigger-btn:hover:not(:disabled) {
-      background: var(--surface-alt);
-    }
-
-    /* Subtle start button that appears only after top button leaves viewport */
+    /* Floating subtle trigger when scrolled */
     .scroll-order-fab {
       position: fixed;
-      bottom: 16px;
-      left: 16px;
+      bottom: 18px;
+      left: 18px;
       z-index: 28;
-      border: 1px solid var(--border);
-      background: rgba(255, 255, 255, 0.96);
+      border: 1px solid var(--border-strong);
+      background: rgba(252, 250, 246, 0.96);
+      backdrop-filter: blur(6px);
       color: var(--ink);
       font-family: inherit;
-      font-size: 0.82rem;
+      font-size: 0.83rem;
       font-weight: 600;
-      padding: 8px 15px;
+      padding: 9px 16px;
       border-radius: 999px;
-      box-shadow: 0 6px 18px rgba(20, 17, 15, 0.12);
+      box-shadow: 0 8px 22px rgba(36, 31, 28, 0.12);
       cursor: pointer;
       opacity: 0;
       transform: translateY(6px);
@@ -143,7 +187,7 @@
     }
 
     .scroll-order-fab:hover:not(:disabled) {
-      background: var(--surface-alt);
+      background: var(--paper-alt);
     }
 
     .scroll-order-fab.show {
@@ -160,14 +204,14 @@
 
     .closed-banner {
       display: none;
-      max-width: 680px;
+      max-width: 560px;
       margin: 14px auto 0;
-      background: #fdf2ec;
-      color: var(--warm);
-      border: 1px solid #f0d2c2;
+      background: #faeee7;
+      color: var(--terracotta);
+      border: 1px solid #e7cab9;
       border-radius: 10px;
       padding: 9px 14px;
-      font-size: 0.88rem;
+      font-size: 0.86rem;
       font-weight: 600;
     }
 
@@ -180,10 +224,10 @@
       position: sticky;
       top: 0;
       z-index: 20;
-      background: rgba(250, 248, 245, 0.95);
+      background: rgba(246, 241, 233, 0.94);
       backdrop-filter: blur(8px);
       border-bottom: 1px solid var(--border);
-      padding: 8px 14px;
+      padding: 9px 14px;
       display: flex;
       gap: 6px;
       overflow-x: auto;
@@ -197,16 +241,18 @@
     .mobile-link {
       flex: 0 0 auto;
       text-decoration: none;
-      font-size: 0.82rem;
+      font-size: 0.83rem;
       color: var(--muted);
-      padding: 5px 11px;
-      border-radius: 8px;
+      padding: 5px 12px;
+      border-radius: 999px;
       font-weight: 500;
+      border: 1px solid transparent;
     }
 
     .mobile-link.active {
       color: var(--ink);
-      background: var(--surface-alt);
+      background: var(--paper);
+      border-color: var(--border-strong);
       font-weight: 600;
     }
 
@@ -214,7 +260,7 @@
     .layout {
       max-width: 980px;
       margin: 0 auto;
-      padding: 28px 16px;
+      padding: 32px 18px;
       display: grid;
       grid-template-columns: 1fr;
       gap: 32px;
@@ -222,9 +268,9 @@
 
     @media (min-width: 820px) {
       .layout {
-        grid-template-columns: 176px 1fr;
+        grid-template-columns: 184px 1fr;
         align-items: start;
-        gap: 36px;
+        gap: 40px;
       }
 
       .mobile-strip {
@@ -232,7 +278,7 @@
       }
     }
 
-    /* Subtle Side Navigation */
+    /* Side Navigation */
     .side-nav {
       display: none;
     }
@@ -241,40 +287,41 @@
       .side-nav {
         display: flex;
         flex-direction: column;
-        gap: 2px;
+        gap: 4px;
         position: sticky;
-        top: 28px;
-        padding-top: 4px;
-        border-left: 1px solid var(--border);
-        padding-left: 12px;
+        top: 32px;
+        padding: 12px;
+        background: rgba(252, 250, 246, 0.65);
+        border: 1px solid var(--border);
+        border-radius: 14px;
       }
 
       .side-link {
         text-decoration: none;
         color: var(--muted);
-        font-size: 0.88rem;
-        font-weight: 400;
-        padding: 6px 8px;
-        border-radius: 7px;
-        transition: color 0.15s ease, background 0.15s ease;
+        font-size: 0.9rem;
+        padding: 7px 10px;
+        border-radius: 8px;
+        transition: all 0.16s ease;
       }
 
       .side-link:hover {
         color: var(--ink);
-        background: var(--surface-alt);
+        background: var(--paper-alt);
       }
 
       .side-link.active {
         color: var(--ink);
         font-weight: 600;
-        background: var(--surface-alt);
+        background: var(--paper);
+        box-shadow: 0 1px 4px rgba(36, 31, 28, 0.06);
       }
     }
 
     /* Menu Sections */
     .section-block {
-      scroll-margin-top: 56px;
-      margin-bottom: 38px;
+      scroll-margin-top: 60px;
+      margin-bottom: 44px;
     }
 
     .section-head {
@@ -283,28 +330,43 @@
       justify-content: space-between;
       gap: 12px;
       padding-bottom: 10px;
-      margin-bottom: 4px;
-      border-bottom: 1px solid var(--border);
+      margin-bottom: 12px;
+      border-bottom: 1px solid var(--border-strong);
+    }
+
+    .section-title-wrap {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .section-ornament {
+      color: var(--terracotta);
+      font-size: 0.85rem;
+      opacity: 0.85;
     }
 
     .section-title {
-      font-size: 1.28rem;
+      font-family: 'Frank Ruhl Libre', serif;
+      font-size: 1.52rem;
       font-weight: 700;
       color: var(--ink);
+      letter-spacing: -0.01em;
     }
 
     .section-sub {
       font-size: 0.82rem;
       color: var(--muted);
+      font-style: italic;
     }
 
-    /* Clean List */
+    /* Menu Sheet */
     .menu-list {
-      background: var(--surface);
+      background: var(--paper);
       border: 1px solid var(--border);
       border-radius: var(--radius);
-      margin-top: 10px;
-      overflow: hidden;
+      padding: 6px 20px;
+      box-shadow: 0 8px 26px rgba(36, 31, 28, 0.035);
     }
 
     .menu-row {
@@ -312,12 +374,17 @@
       justify-content: space-between;
       align-items: center;
       gap: 16px;
-      padding: 15px 18px;
-      border-bottom: 1px solid var(--border);
+      padding: 16px 2px;
+      border-bottom: 1px dashed var(--border);
+      transition: transform 0.16s ease;
     }
 
     .menu-row:last-child {
       border-bottom: none;
+    }
+
+    .menu-row:hover {
+      transform: translateX(-2px);
     }
 
     .row-content {
@@ -333,29 +400,39 @@
     }
 
     .item-title {
-      font-size: 1.03rem;
-      font-weight: 600;
+      font-family: 'Frank Ruhl Libre', serif;
+      font-size: 1.15rem;
+      font-weight: 700;
       color: var(--ink);
     }
 
+    .item-dots {
+      flex: 1;
+      border-bottom: 1px dotted var(--border-strong);
+      margin: 0 6px;
+      opacity: 0.65;
+    }
+
     .item-price {
-      font-size: 0.98rem;
+      font-size: 0.94rem;
       font-weight: 600;
-      color: var(--warm);
+      color: var(--terracotta);
       white-space: nowrap;
+      letter-spacing: 0.02em;
     }
 
     .item-desc {
       font-size: 0.88rem;
       color: var(--muted);
       margin-top: 3px;
+      font-weight: 300;
     }
 
     .sizes {
       display: none;
       flex-wrap: wrap;
       gap: 6px;
-      margin-top: 9px;
+      margin-top: 10px;
     }
 
     body.ordering-mode .sizes {
@@ -368,7 +445,7 @@
       color: var(--muted);
       font-family: inherit;
       font-size: 0.78rem;
-      padding: 3px 10px;
+      padding: 4px 11px;
       border-radius: 999px;
       cursor: pointer;
       transition: all 0.14s ease;
@@ -384,14 +461,14 @@
     .add-btn {
       display: none;
       flex-shrink: 0;
-      border: 1px solid var(--border);
-      background: var(--surface);
+      border: 1px solid var(--border-strong);
+      background: var(--paper);
       color: var(--ink);
       font-family: inherit;
-      font-size: 0.84rem;
+      font-size: 0.83rem;
       font-weight: 600;
       padding: 8px 14px;
-      border-radius: 10px;
+      border-radius: 999px;
       cursor: pointer;
       transition: all 0.15s ease;
     }
@@ -409,8 +486,19 @@
     .status-msg {
       text-align: center;
       color: var(--muted);
-      padding: 32px 12px;
+      padding: 36px 12px;
       font-size: 0.95rem;
+    }
+
+    /* Footer Mark */
+    .menu-colophon {
+      max-width: 980px;
+      margin: 8px auto 0;
+      padding: 18px;
+      text-align: center;
+      color: var(--muted);
+      font-size: 0.8rem;
+      letter-spacing: 0.08em;
     }
 
     /* Floating Order Bar */
@@ -429,7 +517,7 @@
       align-items: center;
       justify-content: space-between;
       gap: 12px;
-      box-shadow: 0 12px 28px rgba(20, 17, 15, 0.22);
+      box-shadow: 0 12px 28px rgba(20, 17, 15, 0.24);
       z-index: 30;
       cursor: pointer;
     }
@@ -447,7 +535,7 @@
     }
 
     .order-count {
-      background: var(--warm);
+      background: var(--terracotta);
       color: #fff;
       font-size: 0.78rem;
       font-weight: 700;
@@ -471,7 +559,7 @@
     .backdrop {
       position: fixed;
       inset: 0;
-      background: rgba(20, 17, 15, 0.42);
+      background: rgba(20, 17, 15, 0.45);
       display: none;
       align-items: flex-end;
       justify-content: center;
@@ -483,7 +571,7 @@
     }
 
     .sheet {
-      background: var(--surface);
+      background: var(--paper);
       width: 100%;
       max-width: 560px;
       max-height: 88vh;
@@ -499,9 +587,14 @@
       margin-bottom: 14px;
     }
 
+    .sheet-head h2 {
+      font-family: 'Frank Ruhl Libre', serif;
+      font-size: 1.4rem;
+    }
+
     .close-btn {
       border: none;
-      background: var(--surface-alt);
+      background: var(--paper-alt);
       width: 32px;
       height: 32px;
       border-radius: 50%;
@@ -515,7 +608,7 @@
       align-items: center;
       gap: 10px;
       padding: 10px 0;
-      border-bottom: 1px solid var(--border);
+      border-bottom: 1px dashed var(--border);
     }
 
     .qty-box {
@@ -584,8 +677,8 @@
 
     .feedback.err {
       display: block;
-      background: #fdf2ec;
-      color: var(--warm);
+      background: #faeee7;
+      color: var(--terracotta);
       font-weight: 600;
     }
 
@@ -612,10 +705,10 @@
     }
 
     .done-card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 20px;
-      padding: 32px 24px;
+      background: var(--paper);
+      border: 1px solid var(--border-strong);
+      border-radius: 22px;
+      padding: 34px 24px;
       max-width: 420px;
       width: 100%;
       text-align: center;
@@ -628,7 +721,8 @@
     }
 
     .done-number {
-      font-size: 2.6rem;
+      font-family: 'Frank Ruhl Libre', serif;
+      font-size: 2.8rem;
       font-weight: 700;
       color: var(--accent);
       margin: 6px 0 12px;
@@ -657,13 +751,25 @@
 <body>
 
   <header>
-    <div class="brand-en">benenu</div>
-    <h1 id="businessTitle">בינינו</h1>
-    <p class="subtitle">קפה, מאפים וכריכים · איסוף מהדלפק</p>
-    <div class="order-trigger-wrap" id="orderTriggerWrap">
-      <button type="button" class="order-trigger-btn" id="orderTriggerBtn" onclick="toggleOrderingMode()">התחל הזמנה</button>
+    <div class="header-inner">
+      <div class="art-motif" aria-hidden="true">
+        <span class="motif-line"></span>
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M5 9h11v4a5 5 0 0 1-5 5h-1a5 5 0 0 1-5-5V9z"/>
+          <path d="M16 10h2a2 2 0 0 1 0 4h-2"/>
+          <path d="M8 4c0 1.2 1 1.8 1 3"/>
+          <path d="M12 3.5c0 1.2 1 1.8 1 3"/>
+        </svg>
+        <span class="motif-line"></span>
+      </div>
+      <div class="brand-en">benenu</div>
+      <h1 id="businessTitle">בינינו</h1>
+      <p class="subtitle">קפה, מאפים וכריכים · איסוף מהדלפק</p>
+      <div class="order-trigger-wrap" id="orderTriggerWrap">
+        <button type="button" class="order-trigger-btn" id="orderTriggerBtn" onclick="toggleOrderingMode()">התחל הזמנה</button>
+      </div>
+      <div class="closed-banner" id="closedBanner">קבלת הזמנות באתר סגורה כרגע — ניתן לצפות בתפריט</div>
     </div>
-    <div class="closed-banner" id="closedBanner">קבלת הזמנות באתר סגורה כרגע — ניתן לצפות בתפריט</div>
   </header>
 
   <button type="button" class="scroll-order-fab" id="scrollOrderFab" onclick="toggleOrderingMode()">התחל הזמנה</button>
@@ -674,6 +780,8 @@
     <aside class="side-nav" id="sideNav" aria-label="קטגוריות תפריט"></aside>
     <main id="menuRoot"><p class="status-msg">טוען תפריט...</p></main>
   </div>
+
+  <footer class="menu-colophon">✦ &nbsp; benenu · בינינו &nbsp; ✦</footer>
 
   <div class="order-bar" onclick="openSheet()">
     <div class="order-left">
@@ -867,7 +975,10 @@
       document.getElementById("menuRoot").innerHTML = sections.map(sec => `
         <section class="section-block" id="${sec.id}">
           <div class="section-head">
-            <h2 class="section-title">${sec.category}</h2>
+            <div class="section-title-wrap">
+              <span class="section-ornament" aria-hidden="true">❖</span>
+              <h2 class="section-title">${sec.category}</h2>
+            </div>
             <span class="section-sub">${sec.sub || ""}</span>
           </div>
           <div class="menu-list">
@@ -879,6 +990,7 @@
                   <div class="row-content">
                     <div class="row-top">
                       <h3 class="item-title">${item.name}</h3>
+                      <span class="item-dots" aria-hidden="true"></span>
                       <span class="item-price">${current.price} ₪</span>
                     </div>
                     <p class="item-desc">${item.desc}</p>
