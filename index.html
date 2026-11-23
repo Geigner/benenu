@@ -633,6 +633,26 @@
       border-color: var(--accent);
     }
 
+    .daily-code-wrap {
+      display: none;
+      background: var(--accent-soft);
+      border: 1px solid rgba(47, 72, 56, 0.25);
+      border-radius: 12px;
+      padding: 10px 12px;
+    }
+
+    .daily-code-wrap.visible {
+      display: block;
+    }
+
+    .daily-code-label {
+      display: block;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--accent);
+      margin-bottom: 6px;
+    }
+
     .confirm-btn {
       margin-top: 14px;
       width: 100%;
@@ -793,6 +813,10 @@
       </div>
       <div id="sheetItems"></div>
       <div class="inputs">
+        <div class="daily-code-wrap" id="dailyCodeWrap">
+          <label class="daily-code-label" for="dailyCodeInput">קוד הזמנה יומי (מופיע על הדלפק) *</label>
+          <input type="text" class="input" id="dailyCodeInput" placeholder="הזן את הקוד היומי" autocomplete="off" />
+        </div>
         <input type="text" class="input" id="nameInput" placeholder="שם *" required />
         <input type="tel" class="input" id="phoneInput" placeholder="טלפון לעדכון כשהזמנה מוכנה *" required />
         <input type="text" class="input" id="noteInput" placeholder="הערות (למשל נטול קפאין, בלי קרח)" />
@@ -815,9 +839,12 @@
 
   <script>
     const API_URL = "https://script.google.com/macros/s/AKfycbziLXiN0ZaU-yQTln6anOu2vjsRNEAUKq2Jh6mYk1WwymKne9TikZp2gdW3bOGxT0Lb/exec";
+    const SESSION_TTL_MS = 45 * 60 * 1000;
+    const loadedAt = Date.now();
 
     let sections = [];
     let ordersOpen = true;
+    let hasDailyCode = false;
     let orderingMode = false;
     let topTriggerVisible = true;
     let activeId = "";
@@ -906,6 +933,9 @@
           document.getElementById("businessTitle").textContent = data.businessName;
         }
         ordersOpen = data.ordersOpen !== false;
+        hasDailyCode = Boolean(data.hasDailyCode);
+        document.getElementById("dailyCodeWrap").classList.toggle("visible", hasDailyCode);
+
         document.getElementById("closedBanner").classList.toggle("visible", !ordersOpen);
         document.getElementById("orderTriggerBtn").disabled = !ordersOpen;
         document.getElementById("scrollOrderFab").disabled = !ordersOpen;
@@ -1097,6 +1127,12 @@
       const fb = document.getElementById("orderFeedback");
       fb.className = "feedback";
 
+      if (Date.now() - loadedAt > SESSION_TTL_MS) {
+        fb.className = "feedback err";
+        fb.textContent = "העמוד פתוח זמן רב — אנא רענן את הדף לפני שליחת ההזמנה.";
+        return;
+      }
+
       if (!ordersOpen) {
         fb.className = "feedback err";
         fb.textContent = "קבלת הזמנות סגורה כרגע.";
@@ -1111,6 +1147,13 @@
       const name = document.getElementById("nameInput").value.trim();
       const phone = document.getElementById("phoneInput").value.trim();
       const note = document.getElementById("noteInput").value.trim();
+      const dailyCode = document.getElementById("dailyCodeInput").value.trim();
+
+      if (hasDailyCode && !dailyCode) {
+        fb.className = "feedback err";
+        fb.textContent = "יש להזין את הקוד היומי שעל הדלפק.";
+        return;
+      }
 
       if (!name || !phone) {
         fb.className = "feedback err";
@@ -1138,7 +1181,8 @@
             tableOrPickup: "דלפק",
             itemsSummary,
             note,
-            total
+            total,
+            dailyCode
           })
         });
         const data = await res.json();
@@ -1149,6 +1193,7 @@
         const orderNum = data.orderId;
         cart.length = 0;
         document.getElementById("noteInput").value = "";
+        document.getElementById("dailyCodeInput").value = "";
         renderBar();
         renderSheet();
         closeSheet();
