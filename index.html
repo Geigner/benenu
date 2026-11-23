@@ -9,17 +9,16 @@
   <link href="https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@400;500;700;900&family=Heebo:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
   <style>
     :root {
-      --bg: #f3ede2;
-      --paper: #fdfbf7;
-      --paper-alt: #ece3d3;
+      --bg: #f4efe6;
+      --paper: #fdfbf8;
+      --paper-alt: #efe7da;
       --ink: #201b18;
-      --muted: #695f56;
+      --muted: #6c6259;
       --accent: #2f4838;
       --accent-soft: #e7efe9;
       --terracotta: #9d4b2b;
-      --gold-line: rgba(157, 75, 43, 0.28);
-      --border: #ddd2c0;
-      --border-strong: #c4b399;
+      --border: #e3d9c8;
+      --border-strong: #cfc1aa;
       --radius: 20px;
     }
 
@@ -36,11 +35,6 @@
     body {
       font-family: 'Heebo', sans-serif;
       background-color: var(--bg);
-      background-image:
-        radial-gradient(rgba(32, 27, 24, 0.035) 1px, transparent 0),
-        radial-gradient(rgba(157, 75, 43, 0.03) 1px, transparent 0);
-      background-size: 26px 26px;
-      background-position: 0 0, 13px 13px;
       color: var(--ink);
       line-height: 1.6;
       padding-bottom: 72px;
@@ -51,66 +45,22 @@
       padding-bottom: 104px;
     }
 
-    /* Grandiose Editorial Header */
+    /* Clean Grandiose Header */
     header {
-      position: relative;
-      background: linear-gradient(180deg, #fffdf9 0%, var(--paper) 100%);
-      border-bottom: 1px solid var(--border-strong);
-      padding: 36px 20px 30px;
+      background: var(--paper);
+      border-bottom: 1px solid var(--border);
+      padding: 40px 20px 32px;
       text-align: center;
-      overflow: hidden;
-    }
-
-    header::before {
-      content: "";
-      position: absolute;
-      inset: 8px;
-      border: 1px solid var(--border-strong);
-      border-radius: 14px;
-      pointer-events: none;
-    }
-
-    header::after {
-      content: "";
-      position: absolute;
-      inset: 13px;
-      border: 1px dashed var(--gold-line);
-      border-radius: 11px;
-      pointer-events: none;
     }
 
     .header-inner {
-      position: relative;
-      z-index: 1;
       max-width: 660px;
       margin: 0 auto;
     }
 
-    .art-motif {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 12px;
-      color: var(--terracotta);
-      margin-bottom: 8px;
-    }
-
-    .motif-line {
-      flex: 1;
-      max-width: 78px;
-      height: 1px;
-      background: linear-gradient(90deg, transparent, var(--border-strong), transparent);
-    }
-
-    .motif-icons {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-    }
-
     .brand-en {
       font-size: 0.78rem;
-      letter-spacing: 0.3em;
+      letter-spacing: 0.32em;
       text-transform: uppercase;
       color: var(--muted);
       font-weight: 600;
@@ -118,24 +68,24 @@
 
     h1 {
       font-family: 'Frank Ruhl Libre', serif;
-      font-size: clamp(2.2rem, 6vw, 3.1rem);
+      font-size: clamp(2.35rem, 6.2vw, 3.25rem);
       font-weight: 900;
       letter-spacing: -0.015em;
       color: var(--ink);
       line-height: 1.1;
-      margin-top: 4px;
+      margin-top: 6px;
     }
 
     .subtitle {
       color: var(--muted);
-      font-size: 0.96rem;
-      font-weight: 400;
+      font-size: 0.98rem;
+      font-weight: 300;
       margin-top: 8px;
       letter-spacing: 0.02em;
     }
 
     .order-trigger-wrap {
-      margin-top: 20px;
+      margin-top: 22px;
       min-height: 42px;
       display: flex;
       justify-content: center;
@@ -159,7 +109,7 @@
       border-radius: 999px;
       cursor: pointer;
       letter-spacing: 0.02em;
-      box-shadow: 0 6px 18px rgba(47, 72, 56, 0.22);
+      box-shadow: 0 6px 18px rgba(47, 72, 56, 0.18);
       transition: all 0.18s ease;
     }
 
@@ -187,7 +137,7 @@
       left: 18px;
       z-index: 28;
       border: 1px solid var(--border-strong);
-      background: rgba(253, 251, 247, 0.96);
+      background: rgba(253, 251, 248, 0.96);
       backdrop-filter: blur(6px);
       color: var(--ink);
       font-family: inherit;
@@ -195,7 +145,7 @@
       font-weight: 600;
       padding: 9px 16px;
       border-radius: 999px;
-      box-shadow: 0 8px 22px rgba(32, 27, 24, 0.14);
+      box-shadow: 0 8px 22px rgba(32, 27, 24, 0.12);
       cursor: pointer;
       opacity: 0;
       transform: translateY(6px);
@@ -241,7 +191,7 @@
       position: sticky;
       top: 0;
       z-index: 20;
-      background: rgba(243, 237, 226, 0.95);
+      background: rgba(244, 239, 230, 0.95);
       backdrop-filter: blur(8px);
       border-bottom: 1px solid var(--border);
       padding: 9px 14px;
@@ -269,7 +219,7 @@
     .mobile-link.active {
       color: var(--ink);
       background: var(--paper);
-      border-color: var(--border-strong);
+      border-color: var(--border);
       font-weight: 600;
     }
 
@@ -277,7 +227,7 @@
     .layout {
       max-width: 1000px;
       margin: 0 auto;
-      padding: 36px 18px;
+      padding: 38px 18px;
       display: grid;
       grid-template-columns: 1fr;
       gap: 34px;
@@ -285,9 +235,9 @@
 
     @media (min-width: 820px) {
       .layout {
-        grid-template-columns: 192px 1fr;
+        grid-template-columns: 188px 1fr;
         align-items: start;
-        gap: 44px;
+        gap: 46px;
       }
 
       .mobile-strip {
@@ -307,19 +257,18 @@
         gap: 4px;
         position: sticky;
         top: 32px;
-        padding: 14px;
-        background: rgba(253, 251, 247, 0.82);
-        border: 1px solid var(--border-strong);
+        padding: 10px;
+        background: var(--paper);
+        border: 1px solid var(--border);
         border-radius: 16px;
-        box-shadow: 0 6px 20px rgba(32, 27, 24, 0.04);
       }
 
       .side-link {
         text-decoration: none;
         color: var(--muted);
         font-size: 0.9rem;
-        padding: 7px 11px;
-        border-radius: 9px;
+        padding: 8px 12px;
+        border-radius: 10px;
         transition: all 0.16s ease;
       }
 
@@ -331,15 +280,14 @@
       .side-link.active {
         color: var(--ink);
         font-weight: 600;
-        background: var(--paper);
-        border-right: 3px solid var(--terracotta);
+        background: var(--bg);
       }
     }
 
     /* Menu Sections */
     .section-block {
       scroll-margin-top: 60px;
-      margin-bottom: 48px;
+      margin-bottom: 52px;
     }
 
     .section-head {
@@ -349,83 +297,42 @@
       gap: 12px;
       padding-bottom: 10px;
       margin-bottom: 14px;
-      border-bottom: 1px solid var(--border-strong);
-      position: relative;
-    }
-
-    .section-head::after {
-      content: "";
-      position: absolute;
-      bottom: -1px;
-      right: 0;
-      width: 72px;
-      height: 2px;
-      background: var(--terracotta);
-    }
-
-    .section-title-wrap {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .section-ornament {
-      color: var(--terracotta);
-      font-size: 0.9rem;
+      border-bottom: 1px solid var(--border);
     }
 
     .section-title {
       font-family: 'Frank Ruhl Libre', serif;
-      font-size: 1.65rem;
+      font-size: 1.7rem;
       font-weight: 700;
       color: var(--ink);
       letter-spacing: -0.01em;
     }
 
     .section-sub {
-      font-size: 0.83rem;
+      font-size: 0.84rem;
       color: var(--muted);
-      font-style: italic;
     }
 
-    /* Menu Sheet */
+    /* Clean Menu Sheet */
     .menu-list {
-      position: relative;
       background: var(--paper);
-      border: 1px solid var(--border-strong);
+      border: 1px solid var(--border);
       border-radius: var(--radius);
-      padding: 10px 22px;
-      box-shadow: 0 12px 32px rgba(32, 27, 24, 0.055);
-      overflow: hidden;
-    }
-
-    .menu-list::before {
-      content: "";
-      position: absolute;
-      inset: 5px;
-      border: 1px solid rgba(196, 179, 153, 0.35);
-      border-radius: 15px;
-      pointer-events: none;
+      padding: 8px 24px;
+      box-shadow: 0 10px 28px rgba(32, 27, 24, 0.04);
     }
 
     .menu-row {
-      position: relative;
-      z-index: 1;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      gap: 16px;
-      padding: 16px 2px;
-      border-bottom: 1px dashed var(--border);
-      transition: transform 0.16s ease;
+      gap: 18px;
+      padding: 18px 0;
+      border-bottom: 1px solid var(--border);
     }
 
     .menu-row:last-child {
       border-bottom: none;
-    }
-
-    .menu-row:hover {
-      transform: translateX(-2px);
     }
 
     .row-content {
@@ -437,35 +344,27 @@
       display: flex;
       align-items: baseline;
       justify-content: space-between;
-      gap: 12px;
+      gap: 14px;
     }
 
     .item-title {
       font-family: 'Frank Ruhl Libre', serif;
-      font-size: 1.18rem;
+      font-size: 1.2rem;
       font-weight: 700;
       color: var(--ink);
     }
 
-    .item-dots {
-      flex: 1;
-      border-bottom: 1px dotted var(--border-strong);
-      margin: 0 6px;
-      opacity: 0.7;
-    }
-
     .item-price {
-      font-size: 0.96rem;
+      font-size: 0.98rem;
       font-weight: 700;
       color: var(--terracotta);
       white-space: nowrap;
-      letter-spacing: 0.02em;
     }
 
     .item-desc {
-      font-size: 0.88rem;
+      font-size: 0.9rem;
       color: var(--muted);
-      margin-top: 3px;
+      margin-top: 4px;
       font-weight: 300;
     }
 
@@ -508,7 +407,7 @@
       font-family: inherit;
       font-size: 0.83rem;
       font-weight: 600;
-      padding: 8px 14px;
+      padding: 8px 15px;
       border-radius: 999px;
       cursor: pointer;
       transition: all 0.15s ease;
@@ -531,24 +430,15 @@
       font-size: 0.95rem;
     }
 
-    /* Footer Colophon with Cyclamen Motif */
+    /* Footer Mark */
     .menu-colophon {
       max-width: 1000px;
-      margin: 10px auto 0;
-      padding: 20px 18px;
+      margin: 6px auto 0;
+      padding: 18px;
       text-align: center;
       color: var(--muted);
-      font-size: 0.82rem;
-      letter-spacing: 0.08em;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .colophon-flower {
-      color: var(--terracotta);
-      opacity: 0.88;
+      font-size: 0.8rem;
+      letter-spacing: 0.12em;
     }
 
     /* Floating Order Bar */
@@ -658,7 +548,7 @@
       align-items: center;
       gap: 10px;
       padding: 10px 0;
-      border-bottom: 1px dashed var(--border);
+      border-bottom: 1px solid var(--border);
     }
 
     .qty-box {
@@ -802,29 +692,8 @@
 
   <header>
     <div class="header-inner">
-      <div class="art-motif" aria-hidden="true">
-        <span class="motif-line"></span>
-        <span class="motif-icons">
-          <!-- Cyclamen (רקפת) line-art -->
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M12 20c0-4-1-7-2-10"/>
-            <path d="M10 10c-2.8-2.5-5.5-2-6.5.3 1.5 1.8 4 2.1 6.5.7z"/>
-            <path d="M10 10c-1.2-3.5.3-6.2 2.5-6.8 1 2.2.2 4.8-2.5 6.8z"/>
-            <path d="M10 10c1.8-3.2 4.8-3.5 6.5-1.5-1.2 2.1-3.8 2.8-6.5 1.5z"/>
-            <path d="M10 10c3.2-1.2 5.5.8 5.2 3.2-2.2.4-4.5-.8-5.2-3.2z"/>
-          </svg>
-          <!-- Coffee cup line-art -->
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M5 10h11v4a5 5 0 0 1-5 5h-1a5 5 0 0 1-5-5v-4z"/>
-            <path d="M16 11h2a2 2 0 0 1 0 4h-2"/>
-            <path d="M8.5 5c0 1.1.9 1.6.9 2.7"/>
-            <path d="M12 4.5c0 1.1.9 1.6.9 2.7"/>
-          </svg>
-        </span>
-        <span class="motif-line"></span>
-      </div>
-      <div class="brand-en">benenu · טבעון</div>
-      <h1 id="businessTitle">בינינו · benenu</h1>
+      <div class="brand-en">benenu</div>
+      <h1 id="businessTitle">בינינו</h1>
       <p class="subtitle">קפה, מאפים וכריכים · איסוף מהדלפק</p>
       <div class="order-trigger-wrap" id="orderTriggerWrap">
         <button type="button" class="order-trigger-btn" id="orderTriggerBtn" onclick="toggleOrderingMode()">התחל הזמנה</button>
@@ -842,18 +711,7 @@
     <main id="menuRoot"><p class="status-msg">טוען תפריט...</p></main>
   </div>
 
-  <footer class="menu-colophon">
-    <span class="colophon-flower" aria-hidden="true">
-      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M12 20c0-4-1-7-2-10"/>
-        <path d="M10 10c-2.8-2.5-5.5-2-6.5.3 1.5 1.8 4 2.1 6.5.7z"/>
-        <path d="M10 10c-1.2-3.5.3-6.2 2.5-6.8 1 2.2.2 4.8-2.5 6.8z"/>
-        <path d="M10 10c1.8-3.2 4.8-3.5 6.5-1.5-1.2 2.1-3.8 2.8-6.5 1.5z"/>
-        <path d="M10 10c3.2-1.2 5.5.8 5.2 3.2-2.2.4-4.5-.8-5.2-3.2z"/>
-      </svg>
-    </span>
-    <span>✦ &nbsp; benenu · בינינו · קרית טבעון &nbsp; ✦</span>
-  </footer>
+  <footer class="menu-colophon">benenu · בינינו</footer>
 
   <div class="order-bar" onclick="openSheet()">
     <div class="order-left">
@@ -1047,10 +905,7 @@
       document.getElementById("menuRoot").innerHTML = sections.map(sec => `
         <section class="section-block" id="${sec.id}">
           <div class="section-head">
-            <div class="section-title-wrap">
-              <span class="section-ornament" aria-hidden="true">❖</span>
-              <h2 class="section-title">${sec.category}</h2>
-            </div>
+            <h2 class="section-title">${sec.category}</h2>
             <span class="section-sub">${sec.sub || ""}</span>
           </div>
           <div class="menu-list">
@@ -1062,7 +917,6 @@
                   <div class="row-content">
                     <div class="row-top">
                       <h3 class="item-title">${item.name}</h3>
-                      <span class="item-dots" aria-hidden="true"></span>
                       <span class="item-price">${current.price} ₪</span>
                     </div>
                     <p class="item-desc">${item.desc}</p>
